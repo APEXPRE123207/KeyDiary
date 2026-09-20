@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><title>KeyDiary</title><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "on-tertiary-fixed": "#141d1c", "on-surface-variant": "#3f4948", "tertiary-fixed-dim": "#bfc9c7", "surface-container-high": "#e5e9e4", "surface-dim": "#d7dbd6", "on-background": "#181d1a", "on-secondary-fixed": "#141c25", "error-container": "#ffdad6", "surface": "#f6fbf5", "background": "#f6fbf5", "secondary-container": "#dae3ef", "on-primary": "#ffffff", "on-secondary-fixed-variant": "#3f4851", "secondary-fixed": "#dae3ef", "secondary": "#565f69", "primary-fixed-dim": "#95d1ce", "on-primary-fixed-variant": "#074f4e", "surface-container-low": "#f0f5f0", "inverse-surface": "#2c322e", "primary": "#004543", "error": "#ba1a1a", "primary-container": "#1d5d5b", "on-primary-container": "#97d4d0", "surface-variant": "#dfe4df", "on-secondary": "#ffffff", "on-tertiary-fixed-variant": "#3f4947", "inverse-primary": "#95d1ce", "tertiary": "#353f3e", "surface-container-lowest": "#ffffff", "on-tertiary-container": "#c1cbc9", "surface-bright": "#f6fbf5", "on-surface": "#181d1a", "surface-container": "#ebefea", "on-tertiary": "#ffffff", "outline-variant": "#bfc8c7", "on-secondary-container": "#5c656f", "surface-tint": "#2a6865", "on-error": "#ffffff", "on-error-container": "#93000a", "primary-fixed": "#b1eeeb", "on-primary-fixed": "#00201f", "outline": "#707978", "inverse-on-surface": "#edf2ed", "tertiary-container": "#4c5655", "tertiary-fixed": "#dbe5e3", "secondary-fixed-dim": "#bec7d2", "surface-container-highest": "#dfe4df" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "space-lg": "1.5rem", "space-sm": "0.5rem", "space-xl": "2.25rem", "gutter-tablet": "1.5rem", "margin": "1.25rem", "gutter": "1rem", "margin-tablet": "2rem", "space-xs": "0.25rem", "space-md": "1rem" }, "fontFamily": { "headline-md": ["Plus Jakarta Sans"], "label-lg": ["Plus Jakarta Sans"], "body-lg": ["Plus Jakarta Sans"], "headline-lg": ["Plus Jakarta Sans"], "body-md": ["Plus Jakarta Sans"], "body-sm": ["Plus Jakarta Sans"], "label-md": ["Plus Jakarta Sans"], "headline-lg-mobile": ["Plus Jakarta Sans"], "data-mono": ["JetBrains Mono"], "headline-sm": ["Plus Jakarta Sans"], "label-sm": ["Plus Jakarta Sans"] }, "fontSize": { "headline-md": ["22px", { "lineHeight": "30px", "letterSpacing": "-0.01em", "fontWeight": "600" }], "label-lg": ["15px", { "lineHeight": "20px", "fontWeight": "600" }], "body-lg": ["17px", { "lineHeight": "26px", "fontWeight": "400" }], "headline-lg": ["30px", { "lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "600" }], "body-md": ["15px", { "lineHeight": "23px", "fontWeight": "400" }], "body-sm": ["13px", { "lineHeight": "19px", "fontWeight": "400" }], "label-md": ["13px", { "lineHeight": "18px", "letterSpacing": "0.01em", "fontWeight": "600" }], "headline-lg-mobile": ["26px", { "lineHeight": "34px", "letterSpacing": "-0.015em", "fontWeight": "600" }], "data-mono": ["15px", { "lineHeight": "22px", "letterSpacing": "0.05em", "fontWeight": "500" }], "headline-sm": ["18px", { "lineHeight": "26px", "fontWeight": "600" }], "label-sm": ["11px", { "lineHeight": "16px", "letterSpacing": "0.03em", "fontWeight": "600" }] } } } };</script><style>@layer base{html,body{width:100%;margin:0;padding:0;background-color:#f6fbf5;}body{overscroll-behavior-y:none;-webkit-tap-highlight-color:transparent;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface text-on-surface font-body-md text-body-md flex flex-col min-h-screen antialiased"><header class="fixed top-0 inset-x-0 z-50 bg-surface/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(29,93,91,0.04)] pt-safe"><div class="h-16 px-margin flex items-center justify-between gap-space-sm"><div class="flex items-center gap-space-sm"><img alt="KeyDiary Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1U1ezehJFciOy9GSSoe1aPpNKcDtIBQiAyPBIXjyeGYndF3RavUoaa-jTtuPWckHB3tus9sgCAQPY5EenhOBCA5aTmRoHlWUa2eIC4H4QhSDLpqq-dDdfSnZHv6ukMVfUnoOQvM-Ib82RsDxECAzXCn2f1PGnrDSeMhhfkTAGD-PbA6J8G1X2FbsannvktsMXEMYIl0CxcuLa3WgxzBpXt_GBaTlRYnWaGQsRcTWvIYM-Qau7GTH-MiLe0"/><div class="flex flex-col"><span class="font-headline-sm text-headline-sm text-primary tracking-tight">KeyDiary</span><span class="font-label-sm text-label-sm text-on-surface-variant flex items-center gap-1"><span class="w-1.5 h-1.5 rounded-full bg-primary inline-block"></span>Vault Records</span></div></div><div class="flex items-center gap-space-xs"><button aria-label="Notifications" class="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high/60 transition-colors"><span class="material-symbols-outlined text-[24px]">notifications</span></button><a class="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full pl-space-xs" data-path="family-vault-settings" href="#"><img alt="Profile" class="w-8 h-8 rounded-full object-cover shadow-[0_2px_6px_rgba(29,93,91,0.12)]" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAw1-B67lWzemFqUihQ5hxBXqbuCMMjA32ck06KjHwP3dFMi5LiG5U4tl2bIMAdEtmU26jrTw9X49IVll-gGMqhO917VpFxxAFx6ILbTfY3j3YcdIj9I4Q0HxN2Kbw6z_ToKU03QbXYrj4VP5unZTzfQCD_r92NPyTM8CehlKu5YmG5bPRB4mqNoBYAYRvwrgYIjI-nl_rxq8hau9GAtVkPST1z8KOiCwd8yJ5wUvY2Y2_v8guOcNtO"/></a></div></div></header><main class="flex-1 flex flex-col relative w-full pt-16 pb-24 bg-surface px-margin"><div class="flex flex-col w-full gap-space-md">
+<!-- Family Vault Header & Greeting -->
+<section class="flex flex-col gap-space-xs pt-1">
+<div class="flex items-center justify-between">
+<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container-low shadow-sm">
+<span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+<span class="font-label-sm text-label-sm text-on-surface-variant font-medium">Secure &amp; synced with Soumyadip</span>
+</div>
+<span class="font-label-sm text-label-sm text-outline">v2.4 Private</span>
+</div>
+<div class="flex items-baseline justify-between mt-1">
+<div>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile text-on-surface tracking-tight">Good evening, Dad</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">Your family vault &amp; vital records</p>
+</div>
+<div class="flex -space-x-2 overflow-hidden items-center p-1 bg-surface-container rounded-full shadow-sm">
+<div class="w-8 h-8 rounded-full bg-primary-container text-on-primary font-label-md text-label-md flex items-center justify-center font-bold ring-2 ring-surface">D</div>
+<img class="w-8 h-8 rounded-full object-cover ring-2 ring-surface" data-alt="Warm portrait photograph of a caring adult son smiling softly against neutral natural daylight, family heirloom aesthetic, soft tones" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCr6AFzwWtq85yj5M3xkEbs6Mh5STKbesreZkriwg-17bcinGGPXN0i0A8UTiWc9Qu6Anh3UaWAcfu0APsKEWq89q7-Om5kO0NqlmfRW_iIggV1yNCnsdd58k9u1o7qaXdCHnD4N9i2Bg7ZyruWehkUoghgRANDJGNwV6y7-enHoitMfGMMYZ81yJAdidLeE8AzFYG36wtINMGO9wPCEKNtk7sM4PaqHWYK3KCMw9IPItDwO15GSjo5"/>
+</div>
+</div>
+</section>
+<!-- High-Trust Sync Notice Card -->
+<div class="w-full bg-surface-container-lowest rounded-xl p-space-md shadow-sm flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-primary-fixed flex items-center justify-center text-primary shrink-0">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">shield_with_heart</span>
+</div>
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-1.5">
+<span class="font-label-md text-label-md text-on-surface font-semibold truncate">Shared with Soumyadip (Son)</span>
+<span class="inline-block px-1.5 py-0.5 rounded bg-surface-container text-on-surface-variant font-label-sm text-label-sm">Co-Guardian</span>
+</div>
+<span class="font-body-sm text-body-sm text-on-surface-variant">Last synced today at 4:15 PM • End-to-end secured</span>
+</div>
+</div>
+<button aria-label="Vault permissions and logs" class="w-9 h-9 rounded-full bg-surface-container-low flex items-center justify-center text-on-surface-variant hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-[18px]">lock_clock</span>
+</button>
+</div>
+<!-- Search Bar Affordance -->
+<div class="relative w-full">
+<div class="w-full h-[52px] bg-surface-container-lowest rounded-full shadow-sm px-4 flex items-center gap-3 transition-all focus-within:ring-2 focus-within:ring-primary/20">
+<span class="material-symbols-outlined text-primary text-[22px]">search</span>
+<input class="w-full bg-transparent border-none outline-none font-body-md text-body-md text-on-surface placeholder:text-outline font-normal" id="vault-search-input" placeholder="Search your vault... (e.g. FD, lockers, policy)" type="text"/>
+<div class="flex items-center gap-1 shrink-0">
+<button aria-label="Voice search records" class="w-8 h-8 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors" id="voice-search-btn">
+<span class="material-symbols-outlined text-[20px]">mic</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Category Section Header -->
+<div class="flex items-center justify-between pt-1">
+<div class="flex items-center gap-2">
+<h2 class="font-headline-sm text-headline-sm text-on-surface">Your information</h2>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant font-medium">46 entries</span>
+</div>
+<button class="font-label-md text-label-md text-primary font-semibold flex items-center gap-1 hover:opacity-80 transition-opacity">
+<span>Customize</span>
+<span class="material-symbols-outlined text-[16px]">tune</span>
+</button>
+</div>
+<!-- 2-Column Category Grid -->
+<div class="grid grid-cols-2 gap-space-sm w-full">
+<!-- 1. Investments -->
+<div class="vault-card group flex flex-col justify-between p-3.5 rounded-xl bg-surface-container-lowest shadow-sm hover:shadow-md transition-all active:scale-[0.98] text-left cursor-pointer" role="button" tabindex="0">
+<div class="flex items-start justify-between">
+<div class="w-11 h-11 rounded-full bg-secondary-fixed flex items-center justify-center text-on-secondary-fixed shadow-sm">
+<span class="material-symbols-outlined text-[24px]">savings</span>
+</div>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface font-semibold flex items-center gap-1">
+<span class="material-symbols-outlined text-[12px] text-primary">lock</span> Protected
+        </span>
+</div>
+<div class="mt-3">
+<h3 class="font-label-lg text-label-lg text-on-surface font-bold tracking-tight">Investments</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">8 records</p>
+<div class="mt-2.5 flex items-center gap-1 text-primary font-label-sm text-label-sm font-semibold">
+<span>Mutual funds • FDs</span>
+</div>
+</div>
+</div>
+<!-- 2. Keys & Storage -->
+<div class="vault-card group flex flex-col justify-between p-3.5 rounded-xl bg-surface-container-lowest shadow-sm hover:shadow-md transition-all active:scale-[0.98] text-left cursor-pointer" role="button" tabindex="0">
+<div class="flex items-start justify-between">
+<div class="w-11 h-11 rounded-full bg-primary-fixed flex items-center justify-center text-on-primary-fixed shadow-sm">
+<span class="material-symbols-outlined text-[24px]">key</span>
+</div>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-surface-container-low text-primary font-semibold">
+          Physical
+        </span>
+</div>
+<div class="mt-3">
+<h3 class="font-label-lg text-label-lg text-on-surface font-bold tracking-tight">Keys &amp; Places</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">14 records</p>
+<div class="mt-2.5 flex items-center gap-1 text-primary font-label-sm text-label-sm font-semibold">
+<span>Bank locker • Cupboard</span>
+</div>
+</div>
+</div>
+<!-- 3. Insurance -->
+<div class="vault-card group flex flex-col justify-between p-3.5 rounded-xl bg-surface-container-lowest shadow-sm hover:shadow-md transition-all active:scale-[0.98] text-left cursor-pointer" role="button" tabindex="0">
+<div class="flex items-start justify-between">
+<div class="w-11 h-11 rounded-full bg-surface-container-high flex items-center justify-center text-primary shadow-sm">
+<span class="material-symbols-outlined text-[24px]">verified_user</span>
+</div>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-surface-container text-on-surface-variant font-semibold">
+          2 active
+        </span>
+</div>
+<div class="mt-3">
+<h3 class="font-label-lg text-label-lg text-on-surface font-bold tracking-tight">Insurance</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">5 records</p>
+<div class="mt-2.5 flex items-center gap-1 text-primary font-label-sm text-label-sm font-semibold">
+<span>Life • Mediclaim</span>
+</div>
+</div>
+</div>
+<!-- 4. Cards & Banking -->
+<div class="vault-card group flex flex-col justify-between p-3.5 rounded-xl bg-surface-container-lowest shadow-sm hover:shadow-md transition-all active:scale-[0.98] text-left cursor-pointer" role="button" tabindex="0">
+<div class="flex items-start justify-between">
+<div class="w-11 h-11 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-container shadow-sm">
+<span class="material-symbols-outlined text-[24px]">account_balance</span>
+</div>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-surface-container-low text-on-surface-variant font-semibold">
+          PIN masked
+        </span>
+</div>
+<div class="mt-3">
+<h3 class="font-label-lg text-label-lg text-on-surface font-bold tracking-tight">Cards &amp; Bank</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">4 records</p>
+<div class="mt-2.5 flex items-center gap-1 text-primary font-label-sm text-label-sm font-semibold">
+<span>SBI • HDFC • Debit</span>
+</div>
+</div>
+</div>
+<!-- 5. Property & Land -->
+<div class="vault-card group flex flex-col justify-between p-3.5 rounded-xl bg-surface-container-lowest shadow-sm hover:shadow-md transition-all active:scale-[0.98] text-left cursor-pointer" role="button" tabindex="0">
+<div class="flex items-start justify-between">
+<div class="w-11 h-11 rounded-full bg-tertiary-fixed flex items-center justify-center text-on-tertiary-fixed shadow-sm">
+<span class="material-symbols-outlined text-[24px]">home_work</span>
+</div>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-surface-container text-on-surface-variant font-semibold">
+          Deeds held
+        </span>
+</div>
+<div class="mt-3">
+<h3 class="font-label-lg text-label-lg text-on-surface font-bold tracking-tight">Property</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">3 records</p>
+<div class="mt-2.5 flex items-center gap-1 text-primary font-label-sm text-label-sm font-semibold">
+<span>Flat deed • Farm land</span>
+</div>
+</div>
+</div>
+<!-- 6. Documents -->
+<div class="vault-card group flex flex-col justify-between p-3.5 rounded-xl bg-surface-container-lowest shadow-sm hover:shadow-md transition-all active:scale-[0.98] text-left cursor-pointer" role="button" tabindex="0">
+<div class="flex items-start justify-between">
+<div class="w-11 h-11 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface-variant shadow-sm">
+<span class="material-symbols-outlined text-[24px]">description</span>
+</div>
+<span class="font-label-sm text-label-sm px-2 py-0.5 rounded-full bg-surface-container-low text-primary font-semibold">
+          Copies ok
+        </span>
+</div>
+<div class="mt-3">
+<h3 class="font-label-lg text-label-lg text-on-surface font-bold tracking-tight">Important Docs</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">12 records</p>
+<div class="mt-2.5 flex items-center gap-1 text-primary font-label-sm text-label-sm font-semibold">
+<span>PAN • Aadhaar • Will</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Quick Add / Custom Category Trigger -->
+<div class="w-full flex flex-col gap-2 pt-1 pb-4">
+<button class="w-full min-h-[52px] bg-primary-container text-on-primary rounded-xl font-label-lg text-label-lg flex items-center justify-center gap-2 shadow-sm active:scale-[0.98] transition-transform" id="quick-add-btn">
+<span class="material-symbols-outlined text-[22px]">add_circle</span>
+<span>+ Quick Add Information</span>
+</button>
+<button class="w-full min-h-[48px] bg-surface-container-low text-primary rounded-xl font-label-md text-label-md flex items-center justify-center gap-2 transition-colors hover:bg-surface-container">
+<span class="material-symbols-outlined text-[18px]">folder_special</span>
+<span>+ Add New Category</span>
+</button>
+</div>
+<!-- Family Emergency Access Reassurance Banner -->
+<div class="w-full bg-surface-container-low rounded-xl p-4 flex items-start gap-3.5 shadow-sm">
+<div class="w-9 h-9 rounded-full bg-surface-container-lowest flex items-center justify-center text-primary shrink-0 shadow-sm">
+<span class="material-symbols-outlined text-[20px]">family_restroom</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-bold">Emergency Protocol Active</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
+        Soumyadip can request time-locked access in medical or travel emergencies. You will always be notified via SMS first.
+      </p>
+</div>
+</div>
+</div>
+<script>
+  (function() {
+    const searchInput = document.getElementById('vault-search-input');
+    const cards = document.querySelectorAll('.vault-card');
+    
+    if (searchInput) {
+      searchInput.addEventListener('input', function(e) {
+        const query = e.target.value.toLowerCase();
+        cards.forEach(card => {
+          const text = card.textContent.toLowerCase();
+          if (text.includes(query)) {
+            card.style.display = 'flex';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      });
+    }
+
+    const voiceBtn = document.getElementById('voice-search-btn');
+    if (voiceBtn) {
+      voiceBtn.addEventListener('click', function() {
+        voiceBtn.classList.toggle('text-error');
+        if (voiceBtn.classList.contains('text-error')) {
+          searchInput.placeholder = 'Listening... Speak category or bank';
+        } else {
+          searchInput.placeholder = 'Search your vault... (e.g. FD, lockers, policy)';
+        }
+      });
+    }
+
+    const quickAddBtn = document.getElementById('quick-add-btn');
+    if (quickAddBtn) {
+      quickAddBtn.addEventListener('click', function() {
+        this.classList.add('bg-primary');
+        setTimeout(() => {
+          this.classList.remove('bg-primary');
+        }, 150);
+      });
+    }
+  })();
+</script></main><nav class="fixed bottom-0 inset-x-0 z-50 pb-safe bg-surface/90 backdrop-blur-xl shadow-[0_-4px_20px_rgba(29,93,91,0.06)]" data-active-classes="text-primary font-semibold"><div class="flex justify-around items-center h-20 px-space-xs max-w-lg mx-auto"><a aria-current="page" class="flex flex-col items-center justify-center min-w-[56px] min-h-[48px] py-1 transition-colors text-primary font-semibold" data-path="vault-records" href="#"><span class="material-symbols-outlined text-[26px]">menu_book</span><span class="font-label-sm text-label-sm tracking-wide mt-0.5">Vault</span></a><a class="flex flex-col items-center justify-center min-w-[56px] min-h-[48px] py-1 text-on-surface-variant transition-colors hover:text-primary" data-path="vault-search" href="#"><span class="material-symbols-outlined text-[26px]">search</span><span class="font-label-sm text-label-sm tracking-wide mt-0.5">Search</span></a><a class="flex flex-col items-center justify-center min-w-[56px] min-h-[48px] py-1 text-on-surface-variant transition-colors hover:text-primary" data-path="vault-activity" href="#"><span class="material-symbols-outlined text-[26px]">history</span><span class="font-label-sm text-label-sm tracking-wide mt-0.5">Activity</span></a><a class="flex flex-col items-center justify-center min-w-[56px] min-h-[48px] py-1 text-on-surface-variant transition-colors hover:text-primary" data-path="family-circle" href="#"><span class="material-symbols-outlined text-[26px]">diversity_1</span><span class="font-label-sm text-label-sm tracking-wide mt-0.5">Family</span></a></div></nav></body></html>

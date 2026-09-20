@@ -1,0 +1,17 @@
+-- ==============================================================================
+-- KeyDiary Starter Templates & Default Categories Reference
+-- ==============================================================================
+
+-- Note: Default categories are automatically provisioned during first-run vault
+-- creation via the Flutter client (or custom seed if executing server-side).
+-- The standard 10 categories:
+-- 1. Investments (icon: savings / trending_up, color: #1D5D5B)
+-- 2. Bank Accounts (icon: account_balance, color: #1D5D5B)
+-- 3. Keys & Places (icon: vpn_key / key, color: #1D5D5B)
+-- 4. Cards & Banking (icon: credit_card, color: #565F69)
+-- 5. Insurance Policies (icon: verified_user / shield, color: #1D5D5B)
+-- 6. Property & Assets (icon: home, color: #565F69)
+-- 7. Important Docs (icon: description / folder_special, color: #1D5D5B)
+-- 8. Loans & Debts (icon: payments, color: #565F69)
+-- 9. Emergency & Medical (icon: emergency / health_and_safety, color: #BA1A1A)
+-- 10. Other Personal Records (icon: folder, color: #353F3E)

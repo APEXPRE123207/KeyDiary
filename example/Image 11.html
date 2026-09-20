@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_stack" name="shell-type"/><title>KeyDiary</title><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "on-tertiary-fixed": "#141d1c", "on-surface-variant": "#3f4948", "tertiary-fixed-dim": "#bfc9c7", "surface-container-high": "#e5e9e4", "surface-dim": "#d7dbd6", "on-background": "#181d1a", "on-secondary-fixed": "#141c25", "error-container": "#ffdad6", "surface": "#f6fbf5", "background": "#f6fbf5", "secondary-container": "#dae3ef", "on-primary": "#ffffff", "on-secondary-fixed-variant": "#3f4851", "secondary-fixed": "#dae3ef", "secondary": "#565f69", "primary-fixed-dim": "#95d1ce", "on-primary-fixed-variant": "#074f4e", "surface-container-low": "#f0f5f0", "inverse-surface": "#2c322e", "primary": "#004543", "error": "#ba1a1a", "primary-container": "#1d5d5b", "on-primary-container": "#97d4d0", "surface-variant": "#dfe4df", "on-secondary": "#ffffff", "on-tertiary-fixed-variant": "#3f4947", "inverse-primary": "#95d1ce", "tertiary": "#353f3e", "surface-container-lowest": "#ffffff", "on-tertiary-container": "#c1cbc9", "surface-bright": "#f6fbf5", "on-surface": "#181d1a", "surface-container": "#ebefea", "on-tertiary": "#ffffff", "outline-variant": "#bfc8c7", "on-secondary-container": "#5c656f", "surface-tint": "#2a6865", "on-error": "#ffffff", "on-error-container": "#93000a", "primary-fixed": "#b1eeeb", "on-primary-fixed": "#00201f", "outline": "#707978", "inverse-on-surface": "#edf2ed", "tertiary-container": "#4c5655", "tertiary-fixed": "#dbe5e3", "secondary-fixed-dim": "#bec7d2", "surface-container-highest": "#dfe4df" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "space-lg": "1.5rem", "space-sm": "0.5rem", "space-xl": "2.25rem", "gutter-tablet": "1.5rem", "margin": "1.25rem", "gutter": "1rem", "margin-tablet": "2rem", "space-xs": "0.25rem", "space-md": "1rem" }, "fontFamily": { "headline-md": ["Plus Jakarta Sans"], "label-lg": ["Plus Jakarta Sans"], "body-lg": ["Plus Jakarta Sans"], "headline-lg": ["Plus Jakarta Sans"], "body-md": ["Plus Jakarta Sans"], "body-sm": ["Plus Jakarta Sans"], "label-md": ["Plus Jakarta Sans"], "headline-lg-mobile": ["Plus Jakarta Sans"], "data-mono": ["JetBrains Mono"], "headline-sm": ["Plus Jakarta Sans"], "label-sm": ["Plus Jakarta Sans"] }, "fontSize": { "headline-md": ["22px", { "lineHeight": "30px", "letterSpacing": "-0.01em", "fontWeight": "600" }], "label-lg": ["15px", { "lineHeight": "20px", "fontWeight": "600" }], "body-lg": ["17px", { "lineHeight": "26px", "fontWeight": "400" }], "headline-lg": ["30px", { "lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "600" }], "body-md": ["15px", { "lineHeight": "23px", "fontWeight": "400" }], "body-sm": ["13px", { "lineHeight": "19px", "fontWeight": "400" }], "label-md": ["13px", { "lineHeight": "18px", "letterSpacing": "0.01em", "fontWeight": "600" }], "headline-lg-mobile": ["26px", { "lineHeight": "34px", "letterSpacing": "-0.015em", "fontWeight": "600" }], "data-mono": ["15px", { "lineHeight": "22px", "letterSpacing": "0.05em", "fontWeight": "500" }], "headline-sm": ["18px", { "lineHeight": "26px", "fontWeight": "600" }], "label-sm": ["11px", { "lineHeight": "16px", "letterSpacing": "0.03em", "fontWeight": "600" }] } } } };</script><style>@layer base{html,body{width:100%;margin:0;padding:0;background-color:#f6fbf5;}body{overscroll-behavior-y:none;-webkit-tap-highlight-color:transparent;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface text-on-surface font-body-md text-body-md flex flex-col min-h-screen antialiased"><header class="fixed top-0 inset-x-0 z-50 bg-surface/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(29,93,91,0.04)] pt-safe"><div class="h-16 px-margin flex items-center justify-between gap-space-sm"><div class="flex items-center gap-space-xs"><button aria-label="Go Back" class="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full text-on-surface hover:bg-surface-container-high/60 transition-colors -ml-space-xs" onclick="history.back()"><span class="material-symbols-outlined text-[24px]">arrow_back</span></button><img alt="KeyDiary Logo" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/AEtjO1U1ezehJFciOy9GSSoe1aPpNKcDtIBQiAyPBIXjyeGYndF3RavUoaa-jTtuPWckHB3tus9sgCAQPY5EenhOBCA5aTmRoHlWUa2eIC4H4QhSDLpqq-dDdfSnZHv6ukMVfUnoOQvM-Ib82RsDxECAzXCn2f1PGnrDSeMhhfkTAGD-PbA6J8G1X2FbsannvktsMXEMYIl0CxcuLa3WgxzBpXt_GBaTlRYnWaGQsRcTWvIYM-Qau7GTH-MiLe0"/><h1 class="font-headline-sm text-headline-sm text-on-surface tracking-tight truncate max-w-[190px]">New Vault Entry</h1></div><div class="flex items-center gap-space-xs"><button aria-label="Notifications" class="min-w-[44px] min-h-[44px] flex items-center justify-center rounded-full text-on-surface-variant hover:bg-surface-container-high/60 transition-colors"><span class="material-symbols-outlined text-[24px]">notifications</span></button><img alt="Profile" class="w-8 h-8 rounded-full object-cover shadow-[0_2px_6px_rgba(29,93,91,0.12)]" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAw1-B67lWzemFqUihQ5hxBXqbuCMMjA32ck06KjHwP3dFMi5LiG5U4tl2bIMAdEtmU26jrTw9X49IVll-gGMqhO917VpFxxAFx6ILbTfY3j3YcdIj9I4Q0HxN2Kbw6z_ToKU03QbXYrj4VP5unZTzfQCD_r92NPyTM8CehlKu5YmG5bPRB4mqNoBYAYRvwrgYIjI-nl_rxq8hau9GAtVkPST1z8KOiCwd8yJ5wUvY2Y2_v8guOcNtO"/></div></div></header><main class="flex-1 flex flex-col relative w-full pt-16 pb-safe bg-surface px-margin"><div class="flex flex-col w-full pb-12">
+<!-- Warm Top Framing & Context Header -->
+<div class="flex items-center justify-between pt-1 pb-4">
+<div class="flex flex-col">
+<div class="flex items-center gap-1.5 text-on-surface-variant">
+<span class="material-symbols-outlined text-[16px] text-primary">auto_stories</span>
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-secondary">Family Vault Ledger</span>
+</div>
+<div class="flex items-center gap-2 mt-0.5">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm">
+          Category: Investments
+        </span>
+<span class="inline-flex items-center gap-1 text-primary text-[12px] font-label-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span>
+          Draft auto-saving
+        </span>
+</div>
+</div>
+<div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center text-primary shadow-sm">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">account_balance</span>
+</div>
+</div>
+<!-- Reassuring Ledger Intro Note -->
+<div class="bg-surface-container-lowest p-4 rounded-xl shadow-sm mb-5 flex items-start gap-3">
+<div class="w-8 h-8 rounded-full bg-primary-fixed flex items-center justify-center text-primary shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[18px]">verified_user</span>
+</div>
+<div class="flex flex-col flex-1 min-w-0">
+<p class="font-label-md text-label-md text-on-surface">Private Family Record</p>
+<p class="font-body-sm text-body-sm text-on-surface-variant">Only trusted circle members can view these sensitive deposit details and nominee records.</p>
+</div>
+</div>
+<!-- Main Ledger Form -->
+<form class="flex flex-col gap-4" onsubmit="event.preventDefault();">
+<!-- Entry Name -->
+<div class="flex flex-col gap-1.5">
+<label class="font-label-md text-label-md text-on-surface flex items-center justify-between" for="entry-name">
+<span>Entry Name</span>
+<span class="text-secondary font-body-sm text-[12px]">Required</span>
+</label>
+<div class="relative flex items-center bg-surface-container-lowest rounded-xl shadow-sm px-3.5 h-[52px] focus-within:bg-surface-container-low transition-all">
+<span class="material-symbols-outlined text-secondary mr-2.5 text-[20px]">bookmark</span>
+<input class="w-full bg-transparent font-body-md text-body-md text-on-surface focus:outline-none placeholder:text-outline-variant" id="entry-name" placeholder="e.g. Master Bedroom Locker" type="text" value="SBI Fixed Deposit"/>
+</div>
+</div>
+<!-- Institution / Bank -->
+<div class="flex flex-col gap-1.5">
+<label class="font-label-md text-label-md text-on-surface" for="institution">
+        Institution / Branch
+      </label>
+<div class="relative flex items-center bg-surface-container-lowest rounded-xl shadow-sm px-3.5 h-[52px] focus-within:bg-surface-container-low transition-all">
+<span class="material-symbols-outlined text-secondary mr-2.5 text-[20px]">account_balance</span>
+<input class="w-full bg-transparent font-body-md text-body-md text-on-surface focus:outline-none placeholder:text-outline-variant" id="institution" placeholder="Bank, agency, or office" type="text" value="State Bank of India"/>
+</div>
+</div>
+<!-- Dual Row: Amount & Maturity -->
+<div class="grid grid-cols-2 gap-3">
+<!-- Deposit Amount -->
+<div class="flex flex-col gap-1.5 min-w-0">
+<label class="font-label-md text-label-md text-on-surface truncate" for="amount">
+          Deposit Amount
+        </label>
+<div class="relative flex items-center bg-surface-container-lowest rounded-xl shadow-sm px-3 h-[52px] focus-within:bg-surface-container-low transition-all">
+<span class="font-data-mono text-data-mono text-primary font-semibold mr-1.5">₹</span>
+<input class="w-full bg-transparent font-data-mono text-data-mono text-on-surface focus:outline-none" id="amount" placeholder="0.00" type="text" value="5,00,000"/>
+</div>
+</div>
+<!-- Maturity Date -->
+<div class="flex flex-col gap-1.5 min-w-0">
+<label class="font-label-md text-label-md text-on-surface truncate" for="maturity-date">
+          Maturity Date
+        </label>
+<div class="relative flex items-center bg-surface-container-lowest rounded-xl shadow-sm px-3 h-[52px] focus-within:bg-surface-container-low transition-all">
+<input class="w-full bg-transparent font-body-md text-body-md text-on-surface focus:outline-none" id="maturity-date" placeholder="DD Mon YYYY" type="text" value="12 Apr 2028"/>
+<button aria-label="Open Calendar" class="w-8 h-8 rounded-full flex items-center justify-center text-primary hover:bg-surface-container transition-colors" type="button">
+<span class="material-symbols-outlined text-[19px]">event</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Nominee Name -->
+<div class="flex flex-col gap-1.5">
+<label class="font-label-md text-label-md text-on-surface flex items-center justify-between" for="nominee">
+<span>Registered Nominee</span>
+<span class="text-primary font-label-sm text-[11px] flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">family_restroom</span> Family Verified
+        </span>
+</label>
+<div class="relative flex items-center bg-surface-container-lowest rounded-xl shadow-sm px-3.5 h-[52px] focus-within:bg-surface-container-low transition-all">
+<div class="w-6 h-6 rounded-full bg-primary-container text-on-primary font-label-sm text-[11px] flex items-center justify-center mr-2.5">
+          S
+        </div>
+<input class="w-full bg-transparent font-body-md text-body-md text-on-surface focus:outline-none" id="nominee" placeholder="Full name as per legal IDs" type="text" value="Soumyadip"/>
+<span class="material-symbols-outlined text-secondary text-[20px]">check_circle</span>
+</div>
+</div>
+<!-- Personal Diary Notes (Warm Archival Paper) -->
+<div class="flex flex-col gap-1.5">
+<div class="flex items-center justify-between">
+<label class="font-label-md text-label-md text-on-surface flex items-center gap-1.5" for="diary-notes">
+<span class="material-symbols-outlined text-primary text-[18px]">edit_note</span>
+<span>Personal Instructions &amp; Safe Spot</span>
+</label>
+<span class="text-secondary font-label-sm text-[11px]">Private note</span>
+</div>
+<div class="relative bg-surface-container-low rounded-xl p-3.5 shadow-inner">
+<textarea class="w-full bg-transparent font-body-md text-body-md text-on-surface focus:outline-none resize-none placeholder:text-outline-variant" id="diary-notes" placeholder="Where is the physical certificate kept? Any instructions for the family or phone numbers of the branch agent..." rows="3">Original receipt is in the blue steel almirah, bottom wooden drawer under the tax binder. Branch manager Mr. Sharma knows about this deposit.</textarea>
+<div class="flex items-center justify-between pt-2 text-secondary font-label-sm text-[11px]">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px]">lock</span>
+            Stored with family-grade encryption
+          </span>
+<span>162 chars</span>
+</div>
+</div>
+</div>
+<!-- Visual Attachment Preview -->
+<div class="flex flex-col gap-2 pt-1">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md text-on-surface">Attached Ledger Photo / Slip</span>
+<button class="text-primary font-label-sm text-label-sm flex items-center gap-0.5" type="button">
+<span class="material-symbols-outlined text-[16px]">add_a_photo</span>
+          Add photo
+        </button>
+</div>
+<div class="flex items-center gap-3 bg-surface-container-lowest p-2.5 rounded-xl shadow-sm">
+<div class="w-14 h-14 rounded-lg bg-surface-container-high overflow-hidden shrink-0">
+<img class="w-full h-full object-cover" data-alt="Close up photograph of a vintage bank deposit receipt with official seal and handwritten details on natural textured warm paper with soft directional window light" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDeG237MH-2oDnWwqgoGaoBqN3RaGvnTe5vWsKmuETnkebtJKxUQGFcxnk4UYlnWUrT-L1PT3EmImplZ6RmvUEIWislYrz08Lzdp-GS1_R-uiLsQGBb-Y6YBrNs8MV59-0M8j3dAccuFgfB31N4YSXc9jVdACu1uYhgbEF8lqKZlfEJeHF7YzkIhyZfc1FHhBAZlulffBoaCbEIVDD_Ym1gsVn3y1RcZ_pQC1LCgXOwGEOYmcdUWX0Q"/>
+</div>
+<div class="flex flex-col flex-1 min-w-0">
+<p class="font-label-md text-label-md text-on-surface truncate">SBI_FD_Certificate_2024.jpg</p>
+<p class="font-body-sm text-body-sm text-secondary">Added today • 1.4 MB</p>
+</div>
+<button aria-label="Remove attachment" class="w-8 h-8 rounded-full flex items-center justify-center text-secondary hover:text-error transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</button>
+</div>
+</div>
+<!-- Trigger to open Custom Detail Sheet if closed -->
+<div class="pt-1">
+<button class="w-full h-12 rounded-xl bg-surface-container-high text-primary font-label-lg text-label-lg flex items-center justify-center gap-2 active:scale-[0.99] transition-transform" id="open-sheet-btn" type="button">
+<span class="material-symbols-outlined text-[20px]">add_circle</span>
+        Add Custom Detail (Locker, PIN, Code)
+      </button>
+</div>
+<!-- Form Action Buttons -->
+<div class="flex flex-col gap-2.5 pt-3 pb-28">
+<button class="w-full h-[52px] rounded-xl bg-primary text-on-primary font-label-lg text-label-lg flex items-center justify-center gap-2 shadow-md active:scale-[0.98] transition-transform" type="button">
+<span class="material-symbols-outlined text-[20px]">lock</span>
+        Save to Vault
+      </button>
+<button class="w-full h-11 rounded-xl bg-surface-container-lowest text-secondary font-label-lg text-label-lg flex items-center justify-center active:scale-[0.98] transition-transform" onclick="history.back()" type="button">
+        Cancel &amp; Discard
+      </button>
+</div>
+</form>
+<!-- Screen 11: Dynamic Custom Field Bottom Sheet / Drawer -->
+<!-- Translucent Backdrop -->
+<div class="fixed inset-0 z-40 bg-inverse-surface/30 backdrop-blur-sm transition-opacity duration-300" id="drawer-backdrop"></div>
+<!-- Slide-up Drawer Surface -->
+<div class="fixed inset-x-0 bottom-0 z-50 bg-surface-container-lowest rounded-t-[28px] shadow-[0_-8px_32px_rgba(29,93,91,0.14)] max-w-lg mx-auto flex flex-col pt-3 pb-safe px-margin transition-transform duration-300 transform translate-y-0" id="custom-field-drawer">
+<!-- Tactile Drag Handle -->
+<div class="w-10 h-1.5 bg-outline-variant/60 rounded-full mx-auto mb-3 cursor-grab"></div>
+<!-- Sheet Header -->
+<div class="flex items-start justify-between pb-2">
+<div class="flex flex-col">
+<h2 class="font-headline-sm text-headline-sm text-on-surface flex items-center gap-1.5">
+<span>Add a detail</span>
+<span class="w-2 h-2 rounded-full bg-primary-fixed-dim"></span>
+</h2>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
+          Add any extra note, locker code, or specific instruction for this entry
+        </p>
+</div>
+<button aria-label="Close bottom sheet" class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high transition-colors" id="close-drawer-icon" type="button">
+<span class="material-symbols-outlined text-[18px]">close</span>
+</button>
+</div>
+<!-- Drawer Content Scroll Area -->
+<div class="flex flex-col gap-4 py-2 overflow-y-auto max-h-[618px]">
+<!-- Field Name Input -->
+<div class="flex flex-col gap-1.5">
+<label class="font-label-md text-label-md text-on-surface" for="custom-field-name">
+          Field Name / Title
+        </label>
+<div class="flex items-center bg-surface-container-low rounded-xl px-3.5 h-[50px] shadow-sm">
+<span class="material-symbols-outlined text-secondary mr-2 text-[20px]">label</span>
+<input class="w-full bg-transparent font-body-md text-body-md text-on-surface focus:outline-none" id="custom-field-name" placeholder="e.g. Secret Passcode, Safe Combination" type="text" value="Locker Key Number"/>
+</div>
+</div>
+<!-- Field Type Selector -->
+<div class="flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md text-on-surface">Select Data Type</span>
+<span class="font-label-sm text-label-sm text-primary font-medium" id="selected-type-indicator">Secret Code</span>
+</div>
+<!-- Chips Grid (2 columns on small screens, neatly wrapped) -->
+<div class="grid grid-cols-4 gap-2" id="type-selector-grid">
+<!-- Text -->
+<button class="type-chip flex flex-col items-center justify-center p-2 rounded-xl bg-surface-container-low text-on-surface-variant active:scale-95 transition-all text-center gap-1" data-type="Text" type="button">
+<span class="material-symbols-outlined text-[20px]">notes</span>
+<span class="font-label-sm text-[11px]">Text</span>
+</button>
+<!-- Number -->
+<button class="type-chip flex flex-col items-center justify-center p-2 rounded-xl bg-surface-container-low text-on-surface-variant active:scale-95 transition-all text-center gap-1" data-type="Number" type="button">
+<span class="material-symbols-outlined text-[20px]">pin</span>
+<span class="font-label-sm text-[11px]">Number</span>
+</button>
+<!-- Currency -->
+<button class="type-chip flex flex-col items-center justify-center p-2 rounded-xl bg-surface-container-low text-on-surface-variant active:scale-95 transition-all text-center gap-1" data-type="Currency" type="button">
+<span class="material-symbols-outlined text-[20px]">payments</span>
+<span class="font-label-sm text-[11px]">Currency</span>
+</button>
+<!-- Date -->
+<button class="type-chip flex flex-col items-center justify-center p-2 rounded-xl bg-surface-container-low text-on-surface-variant active:scale-95 transition-all text-center gap-1" data-type="Date" type="button">
+<span class="material-symbols-outlined text-[20px]">calendar_today</span>
+<span class="font-label-sm text-[11px]">Date</span>
+</button>
+<!-- Secret Code (Selected State) -->
+<button class="type-chip flex flex-col items-center justify-center p-2 rounded-xl bg-primary text-on-primary active:scale-95 transition-all text-center gap-1 shadow-sm" data-type="Secret Code" type="button">
+<span class="material-symbols-outlined text-[20px]">key</span>
+<span class="font-label-sm text-[11px] font-semibold">Secret Code</span>
+</button>
+<!-- Phone -->
+<button class="type-chip flex flex-col items-center justify-center p-2 rounded-xl bg-surface-container-low text-on-surface-variant active:scale-95 transition-all text-center gap-1" data-type="Phone" type="button">
+<span class="material-symbols-outlined text-[20px]">call</span>
+<span class="font-label-sm text-[11px]">Phone</span>
+</button>
+<!-- File -->
+<button class="type-chip flex flex-col items-center justify-center p-2 rounded-xl bg-surface-container-low text-on-surface-variant active:scale-95 transition-all text-center gap-1" data-type="File" type="button">
+<span class="material-symbols-outlined text-[20px]">attach_file</span>
+<span class="font-label-sm text-[11px]">File</span>
+</button>
+<!-- Yes/No -->
+<button class="type-chip flex flex-col items-center justify-center p-2 rounded-xl bg-surface-container-low text-on-surface-variant active:scale-95 transition-all text-center gap-1" data-type="Yes/No" type="button">
+<span class="material-symbols-outlined text-[20px]">toggle_on</span>
+<span class="font-label-sm text-[11px]">Yes / No</span>
+</button>
+</div>
+</div>
+<!-- Field Value Preview with Sensitive Mask -->
+<div class="flex flex-col gap-1.5">
+<label class="font-label-md text-label-md text-on-surface flex items-center justify-between" for="custom-field-val">
+<span>Field Value</span>
+<span class="text-primary font-label-sm text-[11px] flex items-center gap-1">
+<span class="material-symbols-outlined text-[13px]">visibility</span> Masked by default
+          </span>
+</label>
+<div class="flex items-center bg-surface-container-low rounded-xl px-3.5 h-[50px] shadow-sm">
+<input class="w-full bg-transparent font-data-mono text-data-mono text-on-surface focus:outline-none" id="custom-field-val" placeholder="Enter value" type="text" value="LK-492-B (Locker 14B)"/>
+<button aria-label="Toggle Mask" class="w-8 h-8 rounded-full flex items-center justify-center text-primary hover:bg-surface-container-high transition-colors" type="button">
+<span class="material-symbols-outlined text-[18px]">visibility</span>
+</button>
+</div>
+</div>
+<!-- Warm Security Helper Notice -->
+<div class="bg-secondary-container/50 rounded-xl p-3 flex items-start gap-2.5">
+<span class="material-symbols-outlined text-primary text-[18px] mt-0.5 shrink-0">shield</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant">
+          Secret fields will be masked with an eye icon to reveal. Only verified family members with biometric access can view this on their devices.
+        </p>
+</div>
+<!-- Bottom Sheet Action CTA -->
+<div class="pt-2 pb-3">
+<button class="w-full h-[52px] rounded-xl bg-primary text-on-primary font-label-lg text-label-lg flex items-center justify-center gap-2 shadow-md active:scale-[0.98] transition-transform" id="confirm-detail-btn" type="button">
+<span class="material-symbols-outlined text-[20px]">add_task</span>
+          Add detail to entry
+        </button>
+</div>
+</div>
+</div>
+</div>
+<script>
+  (function() {
+    const drawer = document.getElementById('custom-field-drawer');
+    const backdrop = document.getElementById('drawer-backdrop');
+    const closeIcon = document.getElementById('close-drawer-icon');
+    const confirmBtn = document.getElementById('confirm-detail-btn');
+    const openBtn = document.getElementById('open-sheet-btn');
+    const typeChips = document.querySelectorAll('.type-chip');
+    const typeIndicator = document.getElementById('selected-type-indicator');
+
+    function closeDrawer() {
+      if (drawer && backdrop) {
+        drawer.style.transform = 'translateY(100%)';
+        backdrop.style.opacity = '0';
+        setTimeout(() => {
+          drawer.classList.add('pointer-events-none');
+          backdrop.classList.add('pointer-events-none');
+        }, 300);
+      }
+    }
+
+    function openDrawer() {
+      if (drawer && backdrop) {
+        drawer.classList.remove('pointer-events-none');
+        backdrop.classList.remove('pointer-events-none');
+        drawer.style.transform = 'translateY(0%)';
+        backdrop.style.opacity = '1';
+      }
+    }
+
+    if (closeIcon) closeIcon.addEventListener('click', closeDrawer);
+    if (backdrop) backdrop.addEventListener('click', closeDrawer);
+    if (confirmBtn) {
+      confirmBtn.addEventListener('click', function() {
+        const val = document.getElementById('custom-field-name')?.value || 'Detail';
+        confirmBtn.innerHTML = '<span class="material-symbols-outlined text-[20px]">done</span> Added!';
+        setTimeout(() => {
+          confirmBtn.innerHTML = '<span class="material-symbols-outlined text-[20px]">add_task</span> Add detail to entry';
+          closeDrawer();
+        }, 400);
+      });
+    }
+
+    if (openBtn) openBtn.addEventListener('click', openDrawer);
+
+    // Interactive type chip selector
+    typeChips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        typeChips.forEach(c => {
+          c.classList.remove('bg-primary', 'text-on-primary', 'shadow-sm');
+          c.classList.add('bg-surface-container-low', 'text-on-surface-variant');
+          const lbl = c.querySelector('span:last-child');
+          if (lbl) lbl.classList.remove('font-semibold');
+        });
+        chip.classList.add('bg-primary', 'text-on-primary', 'shadow-sm');
+        chip.classList.remove('bg-surface-container-low', 'text-on-surface-variant');
+        const activeLbl = chip.querySelector('span:last-child');
+        if (activeLbl) activeLbl.classList.add('font-semibold');
+        const selectedType = chip.getAttribute('data-type');
+        if (typeIndicator && selectedType) {
+          typeIndicator.textContent = selectedType;
+        }
+      });
+    });
+  })();
+</script></main></body></html>
