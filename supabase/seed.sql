@@ -1,17 +1,35 @@
 -- ==============================================================================
--- KeyDiary Starter Templates & Default Categories Reference
+-- KeyDiary Database Automation: Default Category Provisioning Trigger
 -- ==============================================================================
 
--- Note: Default categories are automatically provisioned during first-run vault
--- creation via the Flutter client (or custom seed if executing server-side).
--- The standard 10 categories:
--- 1. Investments (icon: savings / trending_up, color: #1D5D5B)
--- 2. Bank Accounts (icon: account_balance, color: #1D5D5B)
--- 3. Keys & Places (icon: vpn_key / key, color: #1D5D5B)
--- 4. Cards & Banking (icon: credit_card, color: #565F69)
--- 5. Insurance Policies (icon: verified_user / shield, color: #1D5D5B)
--- 6. Property & Assets (icon: home, color: #565F69)
--- 7. Important Docs (icon: description / folder_special, color: #1D5D5B)
--- 8. Loans & Debts (icon: payments, color: #565F69)
--- 9. Emergency & Medical (icon: emergency / health_and_safety, color: #BA1A1A)
--- 10. Other Personal Records (icon: folder, color: #353F3E)
+-- Whenever a user creates a new vault in public.vaults, this trigger automatically
+-- seeds the 10 standard categories for that vault with default security settings.
+
+CREATE OR REPLACE FUNCTION public.seed_default_vault_categories()
+RETURNS TRIGGER
+LANGUAGE plpgsql
+SECURITY DEFINER
+AS $$
+BEGIN
+    INSERT INTO public.categories (vault_id, name, description, icon, color, position, is_locked, created_by)
+    VALUES
+        (NEW.id, 'Investments', 'Mutual funds, FDs, stocks & nominee records', 'savings', '#1D5D5B', 1, true, NEW.created_by),
+        (NEW.id, 'Bank Accounts', 'Savings accounts, branch IFSC & cheque books', 'account_balance', '#1D5D5B', 2, true, NEW.created_by),
+        (NEW.id, 'Keys & Places', 'Physical locker keys, almirah safe spots & combinations', 'key', '#1D5D5B', 3, false, NEW.created_by),
+        (NEW.id, 'Insurance Policies', 'Life policies (LIC), health cards & premium dates', 'verified_user', '#1D5D5B', 4, false, NEW.created_by),
+        (NEW.id, 'Property & Assets', 'Deeds, mutation certificates, land papers & tax slips', 'home', '#565F69', 5, false, NEW.created_by),
+        (NEW.id, 'Cards & Banking', 'Debit/credit cards, CVV, expiry & limits', 'credit_card', '#565F69', 6, true, NEW.created_by),
+        (NEW.id, 'Important Docs', 'Passports, Aadhar, voter cards & certificates', 'description', '#1D5D5B', 7, false, NEW.created_by),
+        (NEW.id, 'Loans & Debts', 'Home loans, personal borrowing & EMI dates', 'payments', '#565F69', 8, false, NEW.created_by),
+        (NEW.id, 'Emergency & Medical', 'Blood groups, hospital ID, emergency contacts', 'emergency', '#BA1A1A', 9, false, NEW.created_by),
+        (NEW.id, 'Other Personal Records', 'Miscellaneous family information', 'folder', '#353F3E', 10, false, NEW.created_by);
+    RETURN NEW;
+END;
+$$;
+
+-- Attach trigger to public.vaults
+DROP TRIGGER IF EXISTS trg_seed_vault_categories ON public.vaults;
+CREATE TRIGGER trg_seed_vault_categories
+    AFTER INSERT ON public.vaults
+    FOR EACH ROW
+    EXECUTE FUNCTION public.seed_default_vault_categories();
