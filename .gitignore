@@ -67,3 +67,6 @@ android/.gradle/
 # Widget Preview related
 .widget_preview/
 
+# Local scratch notes
+notes
+

@@ -1,6 +1,6 @@
 # KeyDiary — Private Encrypted Family Information Vault
 
-KeyDiary is a production-grade, private, client-side encrypted family information vault designed for two trusted users: a father and his child/co-guardian.
+KeyDiary is a production-grade, private, client-side encrypted family information vault mobile application designed for two trusted users: a father and his child/co-guardian.
 
 KeyDiary replaces vulnerable physical notebooks containing sensitive records:
 * **Investments**: Fixed deposits, mutual funds, shares, and maturity dates
@@ -23,68 +23,94 @@ KeyDiary replaces vulnerable physical notebooks containing sensitive records:
 - **Cryptography**: Audited primitives via `cryptography` (AES-256-GCM, PBKDF2-HMAC-SHA256)
 - **Local Security**: Android Keystore / iOS Keychain via `flutter_secure_storage`
 - **Biometrics**: `local_auth` (Fingerprint / Face ID)
+- **Photo Attachments**: `image_picker` (Camera capture & Gallery selection with AES-256 encryption)
+- **CI/CD**: GitHub Actions (Cloud automated APK build & artifact publishing)
 
 ---
 
 ## Architecture Highlights
 
 1. **Client-Side Zero-Knowledge Encryption**:
-   Plaintext values never touch the network or database unencrypted. All records are encrypted locally before upload using an authenticated AES-256-GCM cipher with unique nonces.
-2. **Shared Vault Key Management**:
-   A randomly generated 256-bit Vault Encryption Key (VEK) is wrapped individually for each member, allowing multi-user family access without plaintext secrets on servers.
-3. **Emergency Recovery Store**:
-   An isolated `emergency_vault` database schema stores synchronized recovery records for designated family scenarios with independent RLS policies.
-4. **Multi-Generational Accessibility**:
-   Generous touch targets (48px+), high-contrast calm color palettes, Plus Jakarta Sans typography, and JetBrains Mono for masked numeric credentials.
+   Plaintext values never touch the network or database unencrypted. All records and image attachments are encrypted locally on-device using AES-256-GCM with unique 12-byte nonces.
+2. **Dedicated Emergency Recovery Store (`emergency_vault`)**:
+   An isolated database schema stores true values for emergency family access when the emergency sync toggle is enabled by co-guardians.
+3. **Photo & Document Image Upload**:
+   - 📸 **Camera capture**: Snap photos of physical passbooks, locker keys, and paper receipts.
+   - 🖼️ **Gallery selection**: Select images from your device photo library.
+   - 🔒 **Zero-knowledge**: Image bytes are encrypted locally with AES-256 before upload to private Supabase storage.
+   - 👁️ **In-app preview**: Full decrypted thumbnail and tap-to-view modal preview in the record detail screen.
 
 ---
 
-## Database Migrations
+## Supabase Step-by-Step Setup
 
-Database setup files are located in `supabase/migrations/`:
-- `001_initial_schema.sql`: Profiles, vaults, members, categories, entries, entry_fields, attachments, and the emergency schema.
-- `002_rls_policies.sql`: Row Level Security policies enforcing vault isolation.
-- `003_storage_and_audit.sql`: Private storage bucket policies and non-sensitive audit logging.
-- `supabase/seed.sql`: Reference seed definitions.
+### 1. Create Your Project
+1. Log in to [supabase.com](https://supabase.com) and click **New Project**.
+2. Set your Project Name (e.g. `KeyDiary`) and generate a strong database password.
+3. Select your closest Region (e.g., `South Asia (Mumbai)`).
+4. **Row Level Security (RLS)**: Keep **"Enable Row Level Security" checked**.
+5. Click **Create new project** and wait ~1 minute for initialization.
 
-To apply migrations to your Supabase project:
+### 2. Run Database Migrations in SQL Editor
+Navigate to the **SQL Editor** tab in the left sidebar and run the SQL scripts in this exact order:
+1. **`supabase/migrations/001_initial_schema.sql`**: Run to create all core tables and the `emergency_vault` schema.
+2. **`supabase/migrations/002_rls_policies.sql`**: Run to enforce strict Row Level Security policies.
+3. **`supabase/migrations/003_storage_and_audit.sql`**: Run to create the private `vault_attachments` storage bucket and audit logs.
+4. **`supabase/seed.sql`**: Run to install the automatic trigger that provisions default categories whenever a new vault is created.
+
+### 3. Copy API Credentials
+1. Go to **Project Settings** (gear icon) → **API**.
+2. Copy your **Project URL** (`https://xxxx.supabase.co`).
+3. Copy your **anon / public key** (under *Project API keys*).
+
+---
+
+## Cloud APK Build via GitHub Actions (Recommended)
+
+You do **not** need to build the APK locally or wait on Gradle downloads. GitHub Actions builds the release APK in the cloud with gigabit speeds.
+
+### Step 1: Add Secrets to GitHub
+1. Open your GitHub repository: [https://github.com/APEXPRE123207/KeyDiary](https://github.com/APEXPRE123207/KeyDiary).
+2. Go to **Settings** → **Secrets and variables** → **Actions**.
+3. Under **Repository secrets**, click **New repository secret** and add:
+   - Name: `SUPABASE_URL` | Value: Paste your Supabase Project URL
+   - Name: `SUPABASE_ANON_KEY` | Value: Paste your Supabase `anon` public key
+
+### Step 2: Download Your Built APK
+1. Go to the **Actions** tab in GitHub.
+2. Select the **Build KeyDiary Android APK** workflow.
+3. Click **Run workflow** (or simply push a commit to trigger it automatically).
+4. When the build finishes (~2 minutes), click the completed run.
+5. Scroll down to **Artifacts** at the bottom and download **`KeyDiary-Release-APK`**.
+6. Transfer or open the `.apk` on your phone to install!
+
+---
+
+## Freeing Up Local PC Storage
+
+If you are running low on disk space on your local computer, run these commands to wipe all local compile artifacts and temporary caches:
+
 ```bash
-supabase db push
-# Or copy/paste the migration scripts into the Supabase Dashboard SQL Editor
+# 1. Clean Flutter build output and generated files
+flutter clean
+
+# 2. In PowerShell, delete local Gradle caches if present
+Remove-Item -Path "android/.gradle" -Recurse -Force -ErrorAction SilentlyContinue
+Remove-Item -Path "$env:USERPROFILE/.gradle/.tmp" -Recurse -Force -ErrorAction SilentlyContinue
 ```
 
----
-
-## Environment Setup
-
-1. Copy `.env.example` to `.env`:
-   ```bash
-   cp .env.example .env
-   ```
-2. Set your public credentials:
-   ```env
-   SUPABASE_URL=https://your-project.supabase.co
-   SUPABASE_ANON_KEY=your-anon-key
-   ```
-*(Note: If `.env` is omitted, KeyDiary automatically boots into Local Secure Hardware Enclave mode for offline development and testing.)*
+*(Because the app is built on GitHub Actions, your local PC does not need any heavy build outputs or Gradle caches!)*
 
 ---
 
-## Running Locally
+## Security & Documentation
 
-```bash
-# Get dependencies
-flutter pub get
-
-# Run unit tests
-flutter test
-
-# Run application
-flutter run
-```
-
----
-
-## Security Documentation
-
-For detailed threat models, cryptographic wire formats, and emergency recovery specifications, refer to [docs/SECURITY.md](docs/SECURITY.md).
+- For detailed threat modeling, cryptographic specifications, and key lifecycles, see [docs/SECURITY.md](docs/SECURITY.md).
+- To test the app locally on Windows desktop without Android overhead:
+  ```bash
+  flutter run -d windows
+  ```
+- To test on Chrome:
+  ```bash
+  flutter run -d chrome
+  ```
