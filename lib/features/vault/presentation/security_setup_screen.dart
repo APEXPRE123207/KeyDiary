@@ -18,8 +18,8 @@ class SecuritySetupScreen extends ConsumerStatefulWidget {
 }
 
 class _SecuritySetupScreenState extends ConsumerState<SecuritySetupScreen> {
-  final _pinController = TextEditingController(text: '1234');
-  final _confirmPinController = TextEditingController(text: '1234');
+  final _pinController = TextEditingController(text: '123456');
+  final _confirmPinController = TextEditingController(text: '123456');
   bool _biometricsEnabled = true;
   int _autoLockSeconds = 60; // 1 minute default
   bool _isSaving = false;
@@ -36,8 +36,8 @@ class _SecuritySetupScreenState extends ConsumerState<SecuritySetupScreen> {
     final pin = _pinController.text.trim();
     final confirm = _confirmPinController.text.trim();
 
-    if (pin.length < 4) {
-      setState(() => _errorMessage = 'PIN must be at least 4 digits');
+    if (pin.length != 6) {
+      setState(() => _errorMessage = 'PIN must be exactly 6 digits');
       return;
     }
     if (pin != confirm) {
@@ -154,7 +154,7 @@ class _SecuritySetupScreenState extends ConsumerState<SecuritySetupScreen> {
                       obscureText: true,
                       maxLength: 6,
                       decoration: const InputDecoration(
-                        labelText: 'Enter 4 to 6 digit PIN',
+                        labelText: 'Enter 6-digit Master PIN',
                         counterText: '',
                       ),
                     ),

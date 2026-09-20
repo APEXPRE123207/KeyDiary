@@ -387,7 +387,7 @@ class _EntryDetailScreenState extends ConsumerState<EntryDetailScreen> {
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          'Stored with family-grade client encryption',
+                          'Stored privately in vault',
                           style: AppTypography.labelSm(),
                         ),
                       ],
@@ -432,7 +432,7 @@ class _EntryDetailScreenState extends ConsumerState<EntryDetailScreen> {
                               _showImagePreview(context, att);
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(content: Text('Viewing encrypted ${att.fileName}...')),
+                                SnackBar(content: Text('Opening ${att.fileName}...')),
                               );
                             }
                           },
@@ -473,7 +473,7 @@ class _EntryDetailScreenState extends ConsumerState<EntryDetailScreen> {
                                       overflow: TextOverflow.ellipsis,
                                     ),
                                     Text(
-                                      '${att.formattedSize} • AES-256 encrypted',
+                                      '${att.formattedSize} • Secure photo',
                                       style: AppTypography.bodySm(),
                                     ),
                                   ],
@@ -486,7 +486,7 @@ class _EntryDetailScreenState extends ConsumerState<EntryDetailScreen> {
                                     _showImagePreview(context, att);
                                   } else {
                                     ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(content: Text('Document ${att.fileName} decrypted for view.')),
+                                      SnackBar(content: Text('Opening ${att.fileName}...')),
                                     );
                                   }
                                 },
@@ -570,7 +570,7 @@ class _EntryDetailScreenState extends ConsumerState<EntryDetailScreen> {
                               children: [
                                 Icon(Icons.lock, size: 48, color: isDark ? AppColors.darkPrimary : AppColors.primary),
                                 const SizedBox(height: 8),
-                                Text('Client-Side Encrypted Photo', style: AppTypography.labelMd()),
+                                Text('Attached Photo', style: AppTypography.labelMd()),
                                 Text(att.formattedSize, style: AppTypography.bodySm()),
                               ],
                             ),

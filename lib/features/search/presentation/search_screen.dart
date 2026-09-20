@@ -70,7 +70,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                   Icon(Icons.lock_outline, size: 14, color: isDark ? AppColors.darkPrimary : AppColors.primary),
                   const SizedBox(width: 4),
                   Text(
-                    'Search is performed locally on decrypted memory — queries are never sent to servers.',
+                    'Instant on-device search',
                     style: AppTypography.labelSm(),
                   ),
                 ],

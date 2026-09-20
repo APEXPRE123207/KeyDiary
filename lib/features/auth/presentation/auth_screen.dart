@@ -152,7 +152,7 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
               ),
               const SizedBox(height: AppDimensions.spaceXs),
               Text(
-                'Private, client-side encrypted repository for your household records and safe spots.',
+                'Private family vault for your household records, safe spots, and important documents.',
                 style: AppTypography.bodyMd(
                   color: isDark ? AppColors.darkOnSurfaceVariant : AppColors.onSurfaceVariant,
                 ),

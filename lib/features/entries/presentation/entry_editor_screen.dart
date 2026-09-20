@@ -99,7 +99,7 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
                 Text('Attach Photo or Document', style: AppTypography.headlineSm()),
                 const SizedBox(height: AppDimensions.spaceSm),
                 Text(
-                  'Images and files are encrypted locally with AES-256-GCM before saving.',
+                  'Photos and receipts are saved privately in your vault.',
                   style: AppTypography.bodySm(),
                   textAlign: TextAlign.center,
                 ),
@@ -713,8 +713,8 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
                             ),
                             Text(
                               _attachedFileSize > 0
-                                  ? '${(_attachedFileSize / (1024 * 1024)).toStringAsFixed(1)} MB • AES-256 encrypted'
-                                  : 'Client-side encrypted',
+                                  ? '${(_attachedFileSize / (1024 * 1024)).toStringAsFixed(1)} MB • Attached photo'
+                                  : 'Attached photo',
                               style: AppTypography.bodySm(),
                             ),
                           ],

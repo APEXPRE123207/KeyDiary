@@ -137,7 +137,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
                     ),
                     const SizedBox(height: AppDimensions.spaceSm),
                     Text(
-                      'Protected with AES-256 client-side encryption',
+                      'Private & Secure Family Vault',
                       style: AppTypography.labelSm(
                         color: isDark ? AppColors.darkOutline : AppColors.outline,
                       ),

@@ -19,21 +19,29 @@ class LockScreen extends ConsumerStatefulWidget {
   ConsumerState<LockScreen> createState() => _LockScreenState();
 }
 
-class _LockScreenState extends ConsumerState<LockScreen> {
+class _LockScreenState extends ConsumerState<LockScreen> with SingleTickerProviderStateMixin {
   String _enteredPin = '';
   String? _errorMessage;
   Timer? _lockoutTimer;
   int _remainingLockout = 0;
+  late AnimationController _shakeController;
+  late Animation<double> _shakeAnimation;
 
   @override
   void initState() {
     super.initState();
+    _shakeController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 350),
+    );
+    _shakeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(_shakeController);
     _checkLockout();
     _tryBiometricUnlock();
   }
 
   @override
   void dispose() {
+    _shakeController.dispose();
     _lockoutTimer?.cancel();
     super.dispose();
   }
@@ -79,14 +87,14 @@ class _LockScreenState extends ConsumerState<LockScreen> {
 
   Future<void> _handleDigitPress(String digit) async {
     if (PinService.isLockedOut()) return;
-    if (_enteredPin.length >= 4) return;
+    if (_enteredPin.length >= 6) return;
 
     setState(() {
       _enteredPin += digit;
       _errorMessage = null;
     });
 
-    if (_enteredPin.length == 4) {
+    if (_enteredPin.length == 6) {
       await _verifyPin();
     }
   }
@@ -116,6 +124,7 @@ class _LockScreenState extends ConsumerState<LockScreen> {
     if (isValid) {
       await _unlockVault();
     } else {
+      _shakeController.forward(from: 0.0);
       setState(() {
         _enteredPin = '';
         if (PinService.isLockedOut()) {
@@ -133,12 +142,10 @@ class _LockScreenState extends ConsumerState<LockScreen> {
     // Retrieve or provision Vault Encryption Key (VEK)
     final activeVaultId = await SecureStorageService.getActiveVaultId() ?? 'primary-vault';
     var vek = await SecureStorageService.getVaultKey(activeVaultId);
-
     if (vek == null) {
       vek = await EncryptionService.generateRandomKey();
       await SecureStorageService.saveVaultKey(activeVaultId, vek);
     }
-
     ref.read(vaultKeyProvider.notifier).state = vek;
 
     if (mounted) {
@@ -166,10 +173,10 @@ class _LockScreenState extends ConsumerState<LockScreen> {
                   children: [
                     const TrustBadge(
                       type: TrustBadgeType.vaultEnclave,
-                      customText: 'Encrypted AES-256',
+                      customText: 'Local Enclave',
                     ),
                     Icon(
-                      Icons.verified_user,
+                      Icons.shield_outlined,
                       size: 20,
                       color: isDark ? AppColors.darkPrimary : AppColors.primary,
                     ),
@@ -181,29 +188,38 @@ class _LockScreenState extends ConsumerState<LockScreen> {
               Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Container(
-                    width: 64,
-                    height: 64,
-                    decoration: BoxDecoration(
-                      color: isDark ? AppColors.darkPrimaryContainer : AppColors.primaryFixed,
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      Icons.fingerprint,
-                      size: 34,
-                      color: isDark ? AppColors.darkOnPrimaryContainer : AppColors.primary,
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(AppDimensions.radiusLg),
+                    child: Image.asset(
+                      'assets/images/app_logo.png',
+                      width: 64,
+                      height: 64,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) => Container(
+                        width: 64,
+                        height: 64,
+                        decoration: BoxDecoration(
+                          color: isDark ? AppColors.darkPrimaryContainer : AppColors.primaryFixed,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(
+                          Icons.lock_outline,
+                          size: 32,
+                          color: isDark ? AppColors.darkOnPrimaryContainer : AppColors.primary,
+                        ),
+                      ),
                     ),
                   ),
                   const SizedBox(height: AppDimensions.spaceMd),
                   Text(
-                    'Family Registry',
+                    'KeyDiary',
                     style: AppTypography.headlineMd(
                       color: isDark ? AppColors.darkOnSurface : AppColors.onSurface,
                     ),
                   ),
                   const SizedBox(height: AppDimensions.spaceXs),
                   Text(
-                    'Protected with on-device biometrics\nor enter master PIN',
+                    'Enter 6-digit Master PIN or use Biometrics',
                     textAlign: TextAlign.center,
                     style: AppTypography.bodySm(
                       color: isDark ? AppColors.darkOnSurfaceVariant : AppColors.onSurfaceVariant,
@@ -211,27 +227,41 @@ class _LockScreenState extends ConsumerState<LockScreen> {
                   ),
                   const SizedBox(height: AppDimensions.spaceLg),
 
-                  // 4-Dot PIN Indicator
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: List.generate(4, (index) {
-                      final isFilled = index < _enteredPin.length;
-                      return Container(
-                        margin: const EdgeInsets.symmetric(horizontal: 8),
-                        width: 16,
-                        height: 16,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: isFilled
-                              ? (isDark ? AppColors.darkPrimary : AppColors.primary)
-                              : Colors.transparent,
-                          border: Border.all(
-                            color: isDark ? AppColors.darkOutline : AppColors.outlineVariant,
-                            width: 2.0,
-                          ),
-                        ),
+                  // 6-Dot PIN Indicator with subtle shake on error
+                  AnimatedBuilder(
+                    animation: _shakeAnimation,
+                    builder: (context, child) {
+                      final offset = _shakeAnimation.value > 0.0
+                          ? 10.0 * (1.0 - _shakeAnimation.value) * (
+                              _shakeAnimation.value * 12 % 2 == 0 ? 1 : -1
+                            )
+                          : 0.0;
+                      return Transform.translate(
+                        offset: Offset(offset, 0),
+                        child: child,
                       );
-                    }),
+                    },
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: List.generate(6, (index) {
+                        final isFilled = index < _enteredPin.length;
+                        return Container(
+                          margin: const EdgeInsets.symmetric(horizontal: 6),
+                          width: 15,
+                          height: 15,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: isFilled
+                                ? (isDark ? AppColors.darkPrimary : AppColors.primary)
+                                : Colors.transparent,
+                            border: Border.all(
+                              color: isDark ? AppColors.darkOutline : AppColors.outlineVariant,
+                              width: 2.0,
+                            ),
+                          ),
+                        );
+                      }),
+                    ),
                   ),
 
                   // Error Message
