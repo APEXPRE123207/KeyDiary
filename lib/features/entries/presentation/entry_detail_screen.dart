@@ -84,7 +84,7 @@ class _EntryDetailScreenState extends ConsumerState<EntryDetailScreen> {
     final amount = _currentEntry.getFieldValue('Deposit Amount') ?? '5,00,000';
     final certificate = _currentEntry.getFieldValue('Certificate / Account') ?? '3049 8219 4821';
     final maturity = _currentEntry.getFieldValue('Maturity Date') ?? '12 April 2028';
-    final nominee = _currentEntry.getFieldValue('Registered Nominee') ?? 'Soumyadip';
+    final nominee = _currentEntry.getFieldValue('Registered Nominee') ?? 'Child';
     final depositType = _currentEntry.getFieldValue('Deposit Type') ?? 'Cumulative Term';
     final interest = _currentEntry.getFieldValue('Interest Rate') ?? '7.10% p.a.';
 

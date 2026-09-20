@@ -66,18 +66,18 @@ class VaultRepository {
       );
       _localMembers.add(member);
 
-      // Add default co-guardian (Soumyadip) for high fidelity with example UI
+      // Add default co-guardian (Child) for high fidelity with example UI
       _localMembers.add(
         VaultMember(
           id: 'member-coguardian-2',
           vaultId: vaultId,
-          userId: 'user-child-soumyadip',
+          userId: 'user-child-guardian',
           role: VaultRole.member,
           encryptedVaultKey: base64Encode(vekBytes),
           keyWrapMetadata: {'local': true},
           createdAt: DateTime.now(),
-          displayName: 'Soumyadip',
-          email: 'soumyadip@family.vault',
+          displayName: 'Child',
+          email: 'child@family.vault',
         ),
       );
 

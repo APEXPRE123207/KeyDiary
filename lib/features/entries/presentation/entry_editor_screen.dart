@@ -53,7 +53,7 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
     _institutionController = TextEditingController(text: e?.getFieldValue('Institution / Branch') ?? 'State Bank of India');
     _amountController = TextEditingController(text: e?.getFieldValue('Deposit Amount') ?? '5,00,000');
     _maturityController = TextEditingController(text: e?.getFieldValue('Maturity Date') ?? '12 Apr 2028');
-    _nomineeController = TextEditingController(text: e?.getFieldValue('Registered Nominee') ?? 'Soumyadip');
+    _nomineeController = TextEditingController(text: e?.getFieldValue('Registered Nominee') ?? 'Child');
     _notesController = TextEditingController(
       text: e?.notes ??
           'Original receipt is in the blue steel almirah, bottom wooden drawer under the tax binder. Branch manager Mr. Sharma knows about this deposit.',

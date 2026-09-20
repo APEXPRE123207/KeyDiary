@@ -196,7 +196,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       contentPadding: EdgeInsets.zero,
                       leading: const Icon(Icons.people_outline),
                       title: Text('Family Co-Guardians', style: AppTypography.labelLg()),
-                      subtitle: Text('Manage shared access with Soumyadip (Son)', style: AppTypography.bodySm()),
+                      subtitle: Text('Manage shared access with Co-Guardian', style: AppTypography.bodySm()),
                       trailing: const Icon(Icons.chevron_right),
                       onTap: () => context.push('/family-vault'),
                     ),

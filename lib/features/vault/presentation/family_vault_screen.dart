@@ -8,6 +8,7 @@ import '../../../core/widgets/app_button.dart';
 import '../../../core/widgets/app_card.dart';
 import '../../../core/widgets/trust_badge.dart';
 import '../domain/vault_member.dart';
+import '../../auth/data/auth_repository.dart';
 
 class FamilyVaultScreen extends ConsumerStatefulWidget {
   const FamilyVaultScreen({super.key});
@@ -17,12 +18,12 @@ class FamilyVaultScreen extends ConsumerStatefulWidget {
 }
 
 class _FamilyVaultScreenState extends ConsumerState<FamilyVaultScreen> {
-  final _emailController = TextEditingController();
+  final _nameController = TextEditingController();
   bool _isEmergencyStoreActive = true;
 
   @override
   void dispose() {
-    _emailController.dispose();
+    _nameController.dispose();
     super.dispose();
   }
 
@@ -40,12 +41,12 @@ class _FamilyVaultScreenState extends ConsumerState<FamilyVaultScreen> {
             ),
             const SizedBox(height: AppDimensions.spaceMd),
             TextField(
-              controller: _emailController,
-              keyboardType: TextInputType.emailAddress,
+              controller: _nameController,
+              textCapitalization: TextCapitalization.words,
               decoration: const InputDecoration(
-                labelText: 'Co-Guardian Email',
-                hintText: 'e.g. child@family.vault',
-                prefixIcon: Icon(Icons.mail_outline),
+                labelText: 'Co-Guardian Name',
+                hintText: 'e.g. Child, Partner, Guardian',
+                prefixIcon: Icon(Icons.person_outline),
               ),
             ),
           ],
@@ -58,28 +59,30 @@ class _FamilyVaultScreenState extends ConsumerState<FamilyVaultScreen> {
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: AppColors.primaryContainer, foregroundColor: Colors.white),
             onPressed: () async {
-              final email = _emailController.text.trim();
-              if (email.isEmpty) return;
+              final name = _nameController.text.trim();
+              if (name.isEmpty) return;
               final vault = ref.read(activeVaultProvider);
               final user = ref.read(currentUserProvider);
               if (vault == null) return;
 
+              final memberEmail = AuthRepository.memberNameToEmail(name);
+
               Navigator.pop(ctx);
               await ref.read(vaultRepositoryProvider).inviteMember(
                 vaultId: vault.id,
-                invitedEmail: email,
+                invitedEmail: memberEmail,
                 invitedBy: user?.id ?? 'user-dad',
               );
               ref.invalidate(vaultMembersProvider);
-              _emailController.clear();
+              _nameController.clear();
 
               if (mounted) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('Invitation sent securely to $email')),
+                  SnackBar(content: Text('Access granted securely to $name')),
                 );
               }
             },
-            child: const Text('Send Invitation'),
+            child: const Text('Grant Access'),
           ),
         ],
       ),
@@ -310,13 +313,16 @@ class _FamilyVaultScreenState extends ConsumerState<FamilyVaultScreen> {
                           borderRadius: BorderRadius.circular(AppDimensions.radiusFull),
                         ),
                         child: Text(
-                          isOwner ? 'Owner (Dad)' : 'Co-Guardian (Son)',
+                          isOwner ? 'Owner' : 'Co-Guardian',
                           style: AppTypography.labelSm(),
                         ),
                       ),
                     ],
                   ),
-                  Text(m.email ?? 'member@family.vault', style: AppTypography.bodySm()),
+                  Text(
+                    isOwner ? 'Primary Vault Administrator' : 'Authorized Co-Guardian',
+                    style: AppTypography.bodySm(),
+                  ),
                 ],
               ),
             ),

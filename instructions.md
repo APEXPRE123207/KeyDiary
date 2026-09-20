@@ -764,7 +764,7 @@ Maturity Date
 [ 12 Apr 2028 ]
 
 Nominee
-[ Soumyadip ]
+[ Child ]
 
 Notes
 [ Original document is in locker ]
@@ -2066,7 +2066,7 @@ On lock screen, never expose sensitive data.
 
 Avoid:
 
-"Soumyadip edited SBI Fixed Deposit"
+"Child edited SBI Fixed Deposit"
 
 Prefer:
 
@@ -2623,7 +2623,7 @@ Maturity
 12 April 2028
 
 Nominee
-Soumyadip
+Child
 
 Notes
 Original receipt in locker.

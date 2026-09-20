@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../data/auth_repository.dart';
 import '../../../app/providers.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_dimensions.dart';
@@ -22,39 +23,50 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
   bool _isLoading = false;
   String? _errorMessage;
 
-  final _emailController = TextEditingController(text: 'dad@family.vault');
-  final _passwordController = TextEditingController(text: 'FamilySecret2026!');
   final _nameController = TextEditingController(text: 'Dad');
+  final _passwordController = TextEditingController(text: 'FamilySecret2026!');
 
   @override
   void dispose() {
-    _emailController.dispose();
-    _passwordController.dispose();
     _nameController.dispose();
+    _passwordController.dispose();
     super.dispose();
   }
 
   Future<void> _submit() async {
+    final name = _nameController.text.trim();
+    final password = _passwordController.text;
+
+    if (name.isEmpty) {
+      setState(() => _errorMessage = 'Please enter your member name or role.');
+      return;
+    }
+    if (password.isEmpty) {
+      setState(() => _errorMessage = 'Please enter your vault password.');
+      return;
+    }
+
     setState(() {
       _isLoading = true;
       _errorMessage = null;
     });
 
     final authRepo = ref.read(authRepositoryProvider);
+    final vaultEmail = AuthRepository.memberNameToEmail(name);
 
     try {
       if (_isSignUp) {
         final user = await authRepo.signUp(
-          email: _emailController.text.trim(),
-          password: _passwordController.text,
-          displayName: _nameController.text.trim(),
+          email: vaultEmail,
+          password: password,
+          displayName: name,
         );
         ref.read(currentUserProvider.notifier).state = user;
         if (mounted) context.go('/category-setup');
       } else {
         final user = await authRepo.signIn(
-          email: _emailController.text.trim(),
-          password: _passwordController.text,
+          email: vaultEmail,
+          password: password,
         );
         ref.read(currentUserProvider.notifier).state = user;
 
@@ -106,18 +118,27 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
 
               const SizedBox(height: AppDimensions.spaceXl),
 
-              // Header
-              Container(
-                width: 48,
-                height: 48,
-                decoration: BoxDecoration(
-                  color: isDark ? AppColors.darkPrimaryContainer : AppColors.primaryFixed,
-                  borderRadius: BorderRadius.circular(AppDimensions.radiusMd),
-                ),
-                child: Icon(
-                  Icons.lock_outline,
-                  color: isDark ? AppColors.darkOnPrimaryContainer : AppColors.primary,
-                  size: 24,
+              // App Logo Header
+              ClipRRect(
+                borderRadius: BorderRadius.circular(AppDimensions.radiusMd),
+                child: Image.asset(
+                  'assets/images/app_logo.png',
+                  width: 52,
+                  height: 52,
+                  fit: BoxFit.cover,
+                  errorBuilder: (context, error, stackTrace) => Container(
+                    width: 52,
+                    height: 52,
+                    decoration: BoxDecoration(
+                      color: isDark ? AppColors.darkPrimaryContainer : AppColors.primaryFixed,
+                      borderRadius: BorderRadius.circular(AppDimensions.radiusMd),
+                    ),
+                    child: Icon(
+                      Icons.lock_outline,
+                      color: isDark ? AppColors.darkOnPrimaryContainer : AppColors.primary,
+                      size: 26,
+                    ),
+                  ),
                 ),
               ),
 
@@ -168,28 +189,18 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
                 const SizedBox(height: AppDimensions.spaceMd),
               ],
 
-              // Form fields
-              if (_isSignUp) ...[
-                Text('Your Name / Family Role', style: AppTypography.labelMd()),
-                const SizedBox(height: 6),
-                TextField(
-                  controller: _nameController,
-                  decoration: const InputDecoration(
-                    hintText: 'e.g. Dad, Mom, Soumyadip',
-                    prefixIcon: Icon(Icons.person_outline),
-                  ),
-                ),
-                const SizedBox(height: AppDimensions.spaceMd),
-              ],
-
-              Text('Email Address', style: AppTypography.labelMd()),
+              // Form fields (Member Name & Password only - no email)
+              Text(
+                _isSignUp ? 'Your Member Name / Role' : 'Member Name',
+                style: AppTypography.labelMd(),
+              ),
               const SizedBox(height: 6),
               TextField(
-                controller: _emailController,
-                keyboardType: TextInputType.emailAddress,
-                decoration: const InputDecoration(
-                  hintText: 'name@family.vault',
-                  prefixIcon: Icon(Icons.mail_outline),
+                controller: _nameController,
+                textCapitalization: TextCapitalization.words,
+                decoration: InputDecoration(
+                  hintText: _isSignUp ? 'e.g. Dad, Mom, Child' : 'Enter your member name',
+                  prefixIcon: const Icon(Icons.person_outline),
                 ),
               ),
 
@@ -224,7 +235,10 @@ class _AuthScreenState extends ConsumerState<AuthScreen> {
 
               Center(
                 child: TextButton(
-                  onPressed: () => setState(() => _isSignUp = !_isSignUp),
+                  onPressed: () => setState(() {
+                    _isSignUp = !_isSignUp;
+                    _errorMessage = null;
+                  }),
                   child: Text(
                     _isSignUp
                         ? 'Already have an account? Sign In'

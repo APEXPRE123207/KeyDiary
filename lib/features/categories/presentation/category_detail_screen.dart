@@ -321,7 +321,7 @@ class _CategoryDetailScreenState extends ConsumerState<CategoryDetailScreen> {
   Widget _buildRecordCard(Entry entry) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
     final amount = entry.getFieldValue('Deposit Amount') ?? entry.getFieldValue('Sum Assured') ?? '₹5,00,000';
-    final nominee = entry.getFieldValue('Registered Nominee') ?? entry.getFieldValue('Nominee') ?? 'Soumyadip';
+    final nominee = entry.getFieldValue('Registered Nominee') ?? entry.getFieldValue('Nominee') ?? 'Child';
     final maturity = entry.getFieldValue('Maturity Date') ?? '12 Apr 2028';
     final safeSpot = entry.getFieldValue('Locker Key Number') ?? 'Safe locker receipt #4';
 

@@ -249,7 +249,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 children: [
                   const TrustBadge(
                     type: TrustBadgeType.vaultEnclave,
-                    customText: 'Secure & synced with Soumyadip',
+                    customText: 'Secure & synced with Co-Guardian',
                   ),
                   Text(
                     'v2.4 Private',
@@ -349,7 +349,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                           Row(
                             children: [
                               Text(
-                                'Shared with Soumyadip (Son)',
+                                'Shared with Co-Guardian',
                                 style: AppTypography.labelMd(
                                   color: isDark ? AppColors.darkOnSurface : AppColors.onSurface,
                                 ),

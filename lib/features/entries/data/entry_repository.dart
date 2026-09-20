@@ -278,7 +278,7 @@ class EntryRepository {
           entryId: 'entry-sbi-fd',
           fieldName: 'Registered Nominee',
           fieldType: EntryFieldType.text,
-          fieldValue: 'Soumyadip',
+          fieldValue: 'Child',
         ),
         const EntryField(
           id: 'f6',
