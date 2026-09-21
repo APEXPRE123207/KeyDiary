@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:uuid/uuid.dart';
 import '../../../core/network/supabase_client.dart';
 import '../../../core/security/secure_storage_service.dart';
 import '../domain/vault.dart';
@@ -18,20 +19,29 @@ class VaultRepository {
   }) async {
     if (SupabaseService.isInitialized) {
       final client = Supabase.instance.client;
+      final effectiveUserId = client.auth.currentUser?.id ?? userId;
+      final vaultId = const Uuid().v4();
 
-      // 1. Create Vault record
-      final vaultRes = await client.from('vaults').insert({
+      // 1. Create Vault record with client-generated UUID
+      await client.from('vaults').insert({
+        'id': vaultId,
         'name': name,
-        'created_by': userId,
-      }).select().single();
+        'created_by': effectiveUserId,
+      });
 
-      final vault = Vault.fromJson(vaultRes);
+      final vault = Vault(
+        id: vaultId,
+        name: name,
+        createdBy: effectiveUserId,
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
+      );
 
       // 2. Wrap and save VEK for owner
       final b64Vek = base64Encode(vekBytes);
       await client.from('vault_members').insert({
         'vault_id': vault.id,
-        'user_id': userId,
+        'user_id': effectiveUserId,
         'role': 'OWNER',
         'encrypted_vault_key': b64Vek,
         'key_wrap_metadata': {'algorithm': 'AES-256-GCM', 'wrapped_locally': true},

@@ -75,7 +75,10 @@ WITH CHECK (user_id = auth.uid());
 -- ------------------------------------------------------------------------------
 CREATE POLICY "Members can view their vaults"
 ON public.vaults FOR SELECT
-USING (public.is_vault_member(id));
+USING (
+    created_by = auth.uid()
+    OR public.is_vault_member(id)
+);
 
 CREATE POLICY "Authenticated users can create vaults"
 ON public.vaults FOR INSERT
@@ -95,7 +98,10 @@ USING (public.is_vault_owner(id));
 -- ------------------------------------------------------------------------------
 CREATE POLICY "Members can view member list of their vaults"
 ON public.vault_members FOR SELECT
-USING (public.is_vault_member(vault_id));
+USING (
+    user_id = auth.uid()
+    OR public.is_vault_member(vault_id)
+);
 
 CREATE POLICY "Vault creators can add initial owner member"
 ON public.vault_members FOR INSERT
@@ -138,11 +144,17 @@ USING (
 -- ------------------------------------------------------------------------------
 CREATE POLICY "Members can view categories in their vault"
 ON public.categories FOR SELECT
-USING (public.is_vault_member(vault_id));
+USING (
+    created_by = auth.uid()
+    OR public.is_vault_member(vault_id)
+);
 
 CREATE POLICY "Members can create categories in their vault"
 ON public.categories FOR INSERT
-WITH CHECK (public.is_vault_member(vault_id));
+WITH CHECK (
+    created_by = auth.uid()
+    OR public.is_vault_member(vault_id)
+);
 
 CREATE POLICY "Members can update categories in their vault"
 ON public.categories FOR UPDATE
