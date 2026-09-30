@@ -38,7 +38,7 @@ class BiometricService {
         biometricOnly: false,
         persistAcrossBackgrounding: true,
       );
-    } on PlatformException {
+    } catch (_) {
       return false;
     }
   }

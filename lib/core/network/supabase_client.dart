@@ -20,8 +20,13 @@ class SupabaseService {
     String? url,
     String? anonKey,
   }) async {
-    final supabaseUrl = url ?? const String.fromEnvironment('SUPABASE_URL');
-    final supabaseAnonKey = anonKey ?? const String.fromEnvironment('SUPABASE_ANON_KEY');
+    final envUrl = const String.fromEnvironment('SUPABASE_URL');
+    final envKey = const String.fromEnvironment('SUPABASE_ANON_KEY');
+
+    final supabaseUrl = url ??
+        (envUrl.isNotEmpty ? envUrl : 'https://zvtreoadnnzntokjqccn.supabase.co');
+    final supabaseAnonKey = anonKey ??
+        (envKey.isNotEmpty ? envKey : 'sb_publishable_OXLqnA61yS8ejKRV_4TE_A_fLke4OeS');
 
     if (supabaseUrl.isEmpty || supabaseAnonKey.isEmpty || supabaseUrl.contains('your-project-ref')) {
       // Not yet configured with live backend, will operate in local secure enclave mode

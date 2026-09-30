@@ -14,6 +14,22 @@ class Vault {
     required this.updatedAt,
   });
 
+  Vault copyWith({
+    String? id,
+    String? name,
+    String? createdBy,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+  }) {
+    return Vault(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      createdBy: createdBy ?? this.createdBy,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+    );
+  }
+
   factory Vault.fromJson(Map<String, dynamic> json) {
     return Vault(
       id: json['id'] as String,

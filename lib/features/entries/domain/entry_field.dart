@@ -147,4 +147,28 @@ class EntryField {
       isSensitive: isSensitive ?? this.isSensitive,
     );
   }
+
+  factory EntryField.fromJson(Map<String, dynamic> json) {
+    return EntryField(
+      id: json['id'] as String,
+      entryId: json['entry_id'] as String,
+      fieldName: json['field_name'] as String,
+      fieldType: EntryFieldType.fromString(json['field_type'] as String),
+      fieldValue: json['field_value'] as String,
+      position: json['position'] as int? ?? 0,
+      isSensitive: json['is_sensitive'] as bool? ?? false,
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'entry_id': entryId,
+      'field_name': fieldName,
+      'field_type': fieldType.toDbString(),
+      'field_value': fieldValue,
+      'position': position,
+      'is_sensitive': isSensitive,
+    };
+  }
 }

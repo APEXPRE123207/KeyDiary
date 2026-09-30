@@ -159,123 +159,157 @@ class _LockScreenState extends ConsumerState<LockScreen> with SingleTickerProvid
 
     return Scaffold(
       backgroundColor: isDark ? AppColors.darkSurface : AppColors.surface,
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: AppDimensions.margin),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              // Top Trust Badge
-              Padding(
-                padding: const EdgeInsets.only(top: AppDimensions.spaceMd),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const TrustBadge(
-                      type: TrustBadgeType.vaultEnclave,
-                      customText: 'Local Enclave',
-                    ),
-                    Icon(
-                      Icons.shield_outlined,
-                      size: 20,
-                      color: isDark ? AppColors.darkPrimary : AppColors.primary,
-                    ),
-                  ],
+      body: SizedBox.expand(
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: AppColors.bgGradient(isDark),
+          ),
+          child: SafeArea(
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                return SingleChildScrollView(
+                  physics: const ClampingScrollPhysics(),
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(minHeight: constraints.maxHeight),
+                    child: IntrinsicHeight(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: AppDimensions.margin),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                // Top Trust Badge
+                Padding(
+                  padding: const EdgeInsets.only(top: AppDimensions.spaceMd),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const TrustBadge(
+                        type: TrustBadgeType.vaultEnclave,
+                        customText: 'Local Enclave',
+                      ),
+                      Icon(
+                        Icons.shield_outlined,
+                        size: 20,
+                        color: isDark ? AppColors.darkPrimary : AppColors.primary,
+                      ),
+                    ],
+                  ),
                 ),
-              ),
 
-              // Title and PIN indicator
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(AppDimensions.radiusLg),
-                    child: Image.asset(
-                      'assets/images/app_logo.png',
-                      width: 64,
-                      height: 64,
-                      fit: BoxFit.cover,
-                      errorBuilder: (context, error, stackTrace) => Container(
+                // Title and PIN indicator
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(AppDimensions.radiusLg),
+                      child: Image.asset(
+                        'assets/images/app_logo.png',
                         width: 64,
                         height: 64,
-                        decoration: BoxDecoration(
-                          color: isDark ? AppColors.darkPrimaryContainer : AppColors.primaryFixed,
-                          shape: BoxShape.circle,
-                        ),
-                        child: Icon(
-                          Icons.lock_outline,
-                          size: 32,
-                          color: isDark ? AppColors.darkOnPrimaryContainer : AppColors.primary,
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) => Container(
+                          width: 64,
+                          height: 64,
+                          decoration: BoxDecoration(
+                            color: isDark ? AppColors.darkPrimaryContainer : AppColors.primaryFixed,
+                            shape: BoxShape.circle,
+                          ),
+                          child: Icon(
+                            Icons.lock_outline,
+                            size: 32,
+                            color: isDark ? AppColors.darkPrimary : AppColors.primary,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: AppDimensions.spaceMd),
-                  Text(
-                    'KeyDiary',
-                    style: AppTypography.headlineMd(
-                      color: isDark ? AppColors.darkOnSurface : AppColors.onSurface,
-                    ),
-                  ),
-                  const SizedBox(height: AppDimensions.spaceXs),
-                  Text(
-                    'Enter 6-digit Master PIN or use Biometrics',
-                    textAlign: TextAlign.center,
-                    style: AppTypography.bodySm(
-                      color: isDark ? AppColors.darkOnSurfaceVariant : AppColors.onSurfaceVariant,
-                    ),
-                  ),
-                  const SizedBox(height: AppDimensions.spaceLg),
-
-                  // 6-Dot PIN Indicator with subtle shake on error
-                  AnimatedBuilder(
-                    animation: _shakeAnimation,
-                    builder: (context, child) {
-                      final offset = _shakeAnimation.value > 0.0
-                          ? 10.0 * (1.0 - _shakeAnimation.value) * (
-                              _shakeAnimation.value * 12 % 2 == 0 ? 1 : -1
-                            )
-                          : 0.0;
-                      return Transform.translate(
-                        offset: Offset(offset, 0),
-                        child: child,
-                      );
-                    },
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: List.generate(6, (index) {
-                        final isFilled = index < _enteredPin.length;
-                        return Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 6),
-                          width: 15,
-                          height: 15,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: isFilled
-                                ? (isDark ? AppColors.darkPrimary : AppColors.primary)
-                                : Colors.transparent,
-                            border: Border.all(
-                              color: isDark ? AppColors.darkOutline : AppColors.outlineVariant,
-                              width: 2.0,
-                            ),
-                          ),
-                        );
-                      }),
-                    ),
-                  ),
-
-                  // Error Message
-                  if (_errorMessage != null) ...[
                     const SizedBox(height: AppDimensions.spaceMd),
                     Text(
-                      _errorMessage!,
-                      style: AppTypography.labelSm(
-                        color: isDark ? AppColors.darkStatusRose : AppColors.statusRose,
+                      'KeyDiary',
+                      style: AppTypography.headlineMd(
+                        color: isDark ? AppColors.darkOnSurface : AppColors.onSurface,
                       ),
                     ),
+                    const SizedBox(height: AppDimensions.spaceXs),
+                    Text(
+                      'Enter 6-digit Master PIN or use Biometrics',
+                      textAlign: TextAlign.center,
+                      style: AppTypography.bodySm(
+                        color: isDark ? AppColors.darkOnSurfaceVariant : AppColors.onSurfaceVariant,
+                      ),
+                    ),
+                    const SizedBox(height: AppDimensions.spaceLg),
+
+                    // 6-Dot PIN Indicator with radial glow and subtle shake on error
+                    Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        // Soft radial glow per design.md (radial-gradient(circle, rgba(124, 203, 180, 0.18), transparent 60%))
+                        Container(
+                          width: 240,
+                          height: 64,
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            gradient: RadialGradient(
+                              colors: [
+                                isDark ? AppColors.lockScreenGlow : AppColors.primary.withAlpha(45),
+                                Colors.transparent,
+                              ],
+                              stops: const [0.0, 0.6],
+                            ),
+                          ),
+                        ),
+                        AnimatedBuilder(
+                          animation: _shakeAnimation,
+                          builder: (context, child) {
+                            final offset = _shakeAnimation.value > 0.0
+                                ? 10.0 * (1.0 - _shakeAnimation.value) * (
+                                    _shakeAnimation.value * 12 % 2 == 0 ? 1 : -1
+                                  )
+                                : 0.0;
+                            return Transform.translate(
+                              offset: Offset(offset, 0),
+                              child: child,
+                            );
+                          },
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: List.generate(6, (index) {
+                              final isFilled = index < _enteredPin.length;
+                              return Container(
+                                margin: const EdgeInsets.symmetric(horizontal: 7),
+                                width: 14,
+                                height: 14,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: isFilled
+                                      ? (isDark ? AppColors.darkPrimary : AppColors.primary)
+                                      : Colors.transparent,
+                                  border: Border.all(
+                                    color: isFilled
+                                        ? (isDark ? AppColors.darkPrimary : AppColors.primary)
+                                        : (isDark ? AppColors.darkOutline : AppColors.outline),
+                                    width: 2.0,
+                                  ),
+                                ),
+                              );
+                            }),
+                          ),
+                        ),
+                      ],
+                    ),
+
+                    // Error Message
+                    if (_errorMessage != null) ...[
+                      const SizedBox(height: AppDimensions.spaceMd),
+                      Text(
+                        _errorMessage!,
+                        style: AppTypography.labelSm(
+                          color: isDark ? AppColors.darkStatusRose : AppColors.statusRose,
+                        ),
+                      ),
+                    ],
                   ],
-                ],
-              ),
+                ),
 
               // Tactile Keypad (1-9, Biometric, 0, Backspace)
               Padding(
@@ -292,12 +326,12 @@ class _LockScreenState extends ConsumerState<LockScreen> with SingleTickerProvid
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        // Biometric prompt trigger
+                        // Biometric prompt trigger (muted icon per design.md)
                         _buildKeypadButton(
                           child: Icon(
                             Icons.fingerprint,
                             size: 28,
-                            color: isDark ? AppColors.darkPrimary : AppColors.primary,
+                            color: isDark ? AppColors.darkOutline : AppColors.outline,
                           ),
                           onTap: _tryBiometricUnlock,
                         ),
@@ -306,7 +340,7 @@ class _LockScreenState extends ConsumerState<LockScreen> with SingleTickerProvid
                           child: Icon(
                             Icons.backspace_outlined,
                             size: 24,
-                            color: isDark ? AppColors.darkOnSurfaceVariant : AppColors.onSurfaceVariant,
+                            color: isDark ? AppColors.darkOutline : AppColors.outline,
                           ),
                           onTap: _handleBackspace,
                         ),
@@ -315,7 +349,14 @@ class _LockScreenState extends ConsumerState<LockScreen> with SingleTickerProvid
                   ],
                 ),
               ),
-            ],
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
           ),
         ),
       ),
@@ -348,11 +389,11 @@ class _LockScreenState extends ConsumerState<LockScreen> with SingleTickerProvid
       width: 72,
       height: 72,
       child: Material(
-        color: isDark ? AppColors.darkSurfaceContainerLowest : AppColors.surfaceContainerLowest,
+        color: isDark ? AppColors.cardFillDark : AppColors.cardFillLight,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(36),
           side: BorderSide(
-            color: isDark ? AppColors.darkOutlineVariant : AppColors.outlineVariant,
+            color: isDark ? AppColors.cardBorderDark : AppColors.cardBorderLight,
             width: 1.0,
           ),
         ),

@@ -29,26 +29,31 @@ class Category {
   });
 
   Category copyWith({
+    String? id,
+    String? vaultId,
     String? name,
     String? description,
     String? icon,
     String? color,
     int? position,
     bool? isLocked,
+    String? createdBy,
+    DateTime? createdAt,
+    DateTime? updatedAt,
     int? recordCount,
   }) {
     return Category(
-      id: id,
-      vaultId: vaultId,
+      id: id ?? this.id,
+      vaultId: vaultId ?? this.vaultId,
       name: name ?? this.name,
       description: description ?? this.description,
       icon: icon ?? this.icon,
       color: color ?? this.color,
       position: position ?? this.position,
       isLocked: isLocked ?? this.isLocked,
-      createdBy: createdBy,
-      createdAt: createdAt,
-      updatedAt: DateTime.now(),
+      createdBy: createdBy ?? this.createdBy,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? DateTime.now(),
       recordCount: recordCount ?? this.recordCount,
     );
   }

@@ -5,7 +5,7 @@ import '../constants/app_typography.dart';
 
 enum AppButtonVariant { primary, secondary, ghost, danger }
 
-/// High-quality button conforming to KeyDiary Tactile Warm Modernism specifications
+/// Pill-shaped button conforming to design.md
 class AppButton extends StatefulWidget {
   final String text;
   final VoidCallback? onPressed;
@@ -45,14 +45,14 @@ class _AppButtonState extends State<AppButton> {
 
     switch (widget.variant) {
       case AppButtonVariant.primary:
-        bg = isDark ? AppColors.darkPrimaryContainer : AppColors.primaryContainer;
-        fg = isDark ? AppColors.darkOnPrimaryContainer : AppColors.onPrimary;
+        bg = isDark ? AppColors.darkPrimary : AppColors.primary;
+        fg = isDark ? AppColors.darkOnPrimary : AppColors.onPrimary;
         break;
       case AppButtonVariant.secondary:
-        bg = isDark ? AppColors.darkSurfaceContainerLowest : AppColors.surfaceContainerLowest;
-        fg = isDark ? AppColors.darkOnSurface : AppColors.primary;
+        bg = isDark ? AppColors.cardFillDark : AppColors.cardFillLight;
+        fg = isDark ? AppColors.darkOnSurface : AppColors.onSurface;
         border = BorderSide(
-          color: isDark ? AppColors.darkOutlineVariant : AppColors.outlineVariant,
+          color: isDark ? AppColors.cardBorderDark : AppColors.cardBorderLight,
           width: 1.0,
         );
         break;
@@ -68,23 +68,23 @@ class _AppButtonState extends State<AppButton> {
 
     return AnimatedScale(
       scale: _isPressed ? 0.98 : 1.0,
-      duration: const Duration(milliseconds: 100),
-      curve: Curves.easeInOut,
+      duration: const Duration(milliseconds: 150),
+      curve: Curves.easeOut,
       child: SizedBox(
         width: widget.width,
         height: widget.height,
         child: Material(
           color: widget.onPressed == null ? bg.withAlpha(120) : bg,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppDimensions.radiusLg),
+            borderRadius: BorderRadius.circular(AppDimensions.radiusFull),
             side: border,
           ),
           child: InkWell(
             onTap: widget.isLoading ? null : widget.onPressed,
             onHighlightChanged: (val) => setState(() => _isPressed = val),
-            borderRadius: BorderRadius.circular(AppDimensions.radiusLg),
+            borderRadius: BorderRadius.circular(AppDimensions.radiusFull),
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppDimensions.spaceMd),
+              padding: const EdgeInsets.symmetric(horizontal: AppDimensions.spaceLg),
               child: widget.isLoading
                   ? Center(
                       child: SizedBox(
@@ -106,7 +106,9 @@ class _AppButtonState extends State<AppButton> {
                         ],
                         Text(
                           widget.text,
-                          style: AppTypography.labelLg(color: fg),
+                          style: AppTypography.labelLg(color: fg).copyWith(
+                            fontWeight: FontWeight.w600,
+                          ),
                         ),
                         if (widget.trailingIcon != null) ...[
                           const SizedBox(width: AppDimensions.spaceSm),
@@ -121,4 +123,3 @@ class _AppButtonState extends State<AppButton> {
     );
   }
 }
-

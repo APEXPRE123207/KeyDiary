@@ -36,6 +36,44 @@ class AuditLog {
     );
   }
 
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'vault_id': vaultId,
+      'user_id': userId,
+      'action': action,
+      'entity_type': entityType,
+      'entity_id': entityId,
+      'metadata': metadata,
+      'created_at': createdAt.toIso8601String(),
+      'user_display_name': userDisplayName,
+    };
+  }
+
+  AuditLog copyWith({
+    String? id,
+    String? vaultId,
+    String? userId,
+    String? action,
+    String? entityType,
+    String? entityId,
+    Map<String, dynamic>? metadata,
+    DateTime? createdAt,
+    String? userDisplayName,
+  }) {
+    return AuditLog(
+      id: id ?? this.id,
+      vaultId: vaultId ?? this.vaultId,
+      userId: userId ?? this.userId,
+      action: action ?? this.action,
+      entityType: entityType ?? this.entityType,
+      entityId: entityId ?? this.entityId,
+      metadata: metadata ?? this.metadata,
+      createdAt: createdAt ?? this.createdAt,
+      userDisplayName: userDisplayName ?? this.userDisplayName,
+    );
+  }
+
   /// Generates a friendly, non-sensitive summary description
   String get friendlyDescription {
     final actor = userDisplayName ?? 'Member';

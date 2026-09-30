@@ -87,9 +87,18 @@ final vaultMembersProvider = FutureProvider<List<VaultMember>>((ref) async {
 // Entries for a category
 final categoryEntriesProvider = FutureProvider.family<List<Entry>, String>((ref, categoryId) async {
   final vek = ref.watch(vaultKeyProvider);
-  if (vek == null) return [];
+  final vault = ref.watch(activeVaultProvider);
+  if (vek == null || vault == null) return [];
   final repo = ref.watch(entryRepositoryProvider);
-  return repo.getEntriesByCategory(categoryId: categoryId, vekBytes: vek);
+  return repo.getEntriesByCategory(categoryId: categoryId, vaultId: vault.id, vekBytes: vek);
+});
+
+// All entries for the active vault
+final vaultEntriesProvider = FutureProvider<List<Entry>>((ref) async {
+  final vault = ref.watch(activeVaultProvider);
+  if (vault == null) return [];
+  final repo = ref.watch(entryRepositoryProvider);
+  return repo.getAllVaultEntries(vaultId: vault.id);
 });
 
 // Audit logs for active vault
@@ -99,3 +108,29 @@ final auditLogsProvider = FutureProvider<List<AuditLog>>((ref) async {
   final repo = ref.watch(auditRepositoryProvider);
   return repo.getLogs(vault.id);
 });
+
+// Role check for active vault (Owner vs Co-Guardian)
+final isVaultOwnerProvider = Provider<bool>((ref) {
+  final user = ref.watch(currentUserProvider);
+  final vault = ref.watch(activeVaultProvider);
+  if (user == null || vault == null) return false;
+
+  final cleanName = user.displayName.trim().toLowerCase();
+  // Any user registered as Co-Guardian (or named Child1) can NEVER be Vault Admin
+  if (user.isCoGuardian || cleanName == 'child1') return false;
+
+  final members = ref.watch(vaultMembersProvider).asData?.value ?? [];
+  final member = members.where((m) =>
+      m.userId == user.id ||
+      (m.displayName != null && m.displayName!.trim().toLowerCase() == cleanName) ||
+      (m.email != null && m.email!.trim().toLowerCase() == user.email.trim().toLowerCase())
+  ).firstOrNull;
+
+  if (member != null) {
+    return member.role == VaultRole.owner;
+  }
+
+  // If no explicit member record found yet, only the vault creator (and not co-guardians) is owner
+  return vault.createdBy == user.id;
+});
+

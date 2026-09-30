@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:uuid/uuid.dart';
 import '../../../app/providers.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_dimensions.dart';
@@ -73,12 +74,11 @@ class _CategorySetupScreenState extends ConsumerState<CategorySetupScreen> {
 
     final vaultRepo = ref.read(vaultRepositoryProvider);
     final catRepo = ref.read(categoryRepositoryProvider);
-    final entryRepo = ref.read(entryRepositoryProvider);
     final user = ref.read(currentUserProvider);
 
     try {
       // 1. Generate or load VEK
-      final activeVaultId = await SecureStorageService.getActiveVaultId() ?? 'primary-family-vault';
+      final activeVaultId = await SecureStorageService.getActiveVaultId() ?? const Uuid().v4();
       var vek = await SecureStorageService.getVaultKey(activeVaultId);
       if (vek == null) {
         vek = await EncryptionService.generateRandomKey();
@@ -88,7 +88,7 @@ class _CategorySetupScreenState extends ConsumerState<CategorySetupScreen> {
       // 2. Create or verify Vault
       final vault = await vaultRepo.createVault(
         name: 'KeyDiary Family Vault',
-        userId: user?.id ?? 'user-dad',
+        userId: user?.id ?? 'user',
         vekBytes: vek,
       );
       ref.read(activeVaultProvider.notifier).state = vault;
@@ -99,12 +99,6 @@ class _CategorySetupScreenState extends ConsumerState<CategorySetupScreen> {
         vaultId: vault.id,
         userId: user?.id,
         selectedCategoryNames: _selected.toList(),
-      );
-
-      // 4. Seed demo entries for high-fidelity UI demonstration
-      entryRepo.seedLocalDemoEntries(
-        categoryId: 'cat-investments-${vault.id}',
-        vaultId: vault.id,
       );
 
       if (mounted) {
@@ -195,7 +189,13 @@ class _CategorySetupScreenState extends ConsumerState<CategorySetupScreen> {
                                   children: [
                                     Row(
                                       children: [
-                                        Text(name, style: AppTypography.labelLg()),
+                                        Flexible(
+                                          child: Text(
+                                            name,
+                                            style: AppTypography.labelLg(),
+                                            overflow: TextOverflow.ellipsis,
+                                          ),
+                                        ),
                                         if (isProtected) ...[
                                           const SizedBox(width: 6),
                                           Container(

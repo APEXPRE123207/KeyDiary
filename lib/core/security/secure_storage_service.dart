@@ -19,6 +19,160 @@ class SecureStorageService {
   static const String _keyAutoLockSeconds = 'keydiary_autolock_seconds';
   static const String _keyActiveVaultId = 'keydiary_active_vault_id';
   static const String _keyThemeMode = 'keydiary_theme_mode'; // system, light, dark
+  static const String _keyUserSession = 'keydiary_user_session';
+  static const String _keyLocalAccounts = 'keydiary_local_accounts';
+  static const String _keyLocalVaults = 'keydiary_local_vaults';
+  static const String _keyLocalMembers = 'keydiary_local_members';
+  static const String _keyLocalCategories = 'keydiary_local_categories';
+  static const String _keyLocalEntries = 'keydiary_local_entries';
+
+  /// Saves current active authenticated user session
+  static Future<void> saveUserSession({
+    required String id,
+    required String email,
+    required String displayName,
+    String role = 'ADMIN',
+  }) async {
+    final data = jsonEncode({
+      'id': id,
+      'email': email,
+      'displayName': displayName,
+      'role': role,
+    });
+    await _storage.write(key: _keyUserSession, value: data);
+  }
+
+  /// Retrieves current active authenticated user session
+  static Future<Map<String, String>?> getUserSession() async {
+    final raw = await _storage.read(key: _keyUserSession);
+    if (raw == null || raw.isEmpty) return null;
+    try {
+      final map = jsonDecode(raw) as Map<String, dynamic>;
+      return {
+        'id': map['id'] as String? ?? '',
+        'email': map['email'] as String? ?? '',
+        'displayName': map['displayName'] as String? ?? 'Member',
+        'role': map['role'] as String? ?? 'ADMIN',
+      };
+    } catch (_) {
+      return null;
+    }
+  }
+
+  /// Clears active user session on sign out
+  static Future<void> clearUserSession() async {
+    await _storage.delete(key: _keyUserSession);
+  }
+
+  /// Checks if an active user session exists
+  static Future<bool> hasUserSession() async {
+    final session = await getUserSession();
+    return session != null && session['id']!.isNotEmpty;
+  }
+
+  /// Retrieves stored local accounts
+  static Future<List<Map<String, dynamic>>> getLocalAccounts() async {
+    final raw = await _storage.read(key: _keyLocalAccounts);
+    if (raw == null || raw.isEmpty) return [];
+    try {
+      final list = jsonDecode(raw) as List;
+      return list.cast<Map<String, dynamic>>();
+    } catch (_) {
+      return [];
+    }
+  }
+
+  /// Saves local accounts list
+  static Future<void> saveLocalAccounts(List<Map<String, dynamic>> accounts) async {
+    await _storage.write(key: _keyLocalAccounts, value: jsonEncode(accounts));
+  }
+
+  /// Retrieves stored local vaults
+  static Future<List<Map<String, dynamic>>> getLocalVaults() async {
+    final raw = await _storage.read(key: _keyLocalVaults);
+    if (raw == null || raw.isEmpty) return [];
+    try {
+      final list = jsonDecode(raw) as List;
+      return list.cast<Map<String, dynamic>>();
+    } catch (_) {
+      return [];
+    }
+  }
+
+  /// Saves local vaults list
+  static Future<void> saveLocalVaults(List<Map<String, dynamic>> vaults) async {
+    await _storage.write(key: _keyLocalVaults, value: jsonEncode(vaults));
+  }
+
+  /// Retrieves stored local members
+  static Future<List<Map<String, dynamic>>> getLocalMembers() async {
+    final raw = await _storage.read(key: _keyLocalMembers);
+    if (raw == null || raw.isEmpty) return [];
+    try {
+      final list = jsonDecode(raw) as List;
+      return list.cast<Map<String, dynamic>>();
+    } catch (_) {
+      return [];
+    }
+  }
+
+  /// Saves local members list
+  static Future<void> saveLocalMembers(List<Map<String, dynamic>> members) async {
+    await _storage.write(key: _keyLocalMembers, value: jsonEncode(members));
+  }
+
+  /// Retrieves stored local categories
+  static Future<List<Map<String, dynamic>>> getLocalCategories() async {
+    final raw = await _storage.read(key: _keyLocalCategories);
+    if (raw == null || raw.isEmpty) return [];
+    try {
+      final list = jsonDecode(raw) as List;
+      return list.cast<Map<String, dynamic>>();
+    } catch (_) {
+      return [];
+    }
+  }
+
+  /// Saves local categories list
+  static Future<void> saveLocalCategories(List<Map<String, dynamic>> categories) async {
+    await _storage.write(key: _keyLocalCategories, value: jsonEncode(categories));
+  }
+
+  /// Retrieves stored local entries
+  static Future<List<Map<String, dynamic>>> getLocalEntries() async {
+    final raw = await _storage.read(key: _keyLocalEntries);
+    if (raw == null || raw.isEmpty) return [];
+    try {
+      final list = jsonDecode(raw) as List;
+      return list.cast<Map<String, dynamic>>();
+    } catch (_) {
+      return [];
+    }
+  }
+
+  /// Saves local entries list
+  static Future<void> saveLocalEntries(List<Map<String, dynamic>> entries) async {
+    await _storage.write(key: _keyLocalEntries, value: jsonEncode(entries));
+  }
+
+  static const String _keyLocalAuditLogs = 'keydiary_local_audit_logs';
+
+  /// Retrieves stored local audit logs
+  static Future<List<Map<String, dynamic>>> getLocalAuditLogs() async {
+    final raw = await _storage.read(key: _keyLocalAuditLogs);
+    if (raw == null || raw.isEmpty) return [];
+    try {
+      final list = jsonDecode(raw) as List;
+      return list.cast<Map<String, dynamic>>();
+    } catch (_) {
+      return [];
+    }
+  }
+
+  /// Saves local audit logs list
+  static Future<void> saveLocalAuditLogs(List<Map<String, dynamic>> logs) async {
+    await _storage.write(key: _keyLocalAuditLogs, value: jsonEncode(logs));
+  }
 
   /// Saves hashed PIN verifier
   static Future<void> savePinHash(String hash) async {

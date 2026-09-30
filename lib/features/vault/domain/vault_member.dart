@@ -49,6 +49,33 @@ class VaultMember {
       'encrypted_vault_key': encryptedVaultKey,
       'key_wrap_metadata': keyWrapMetadata,
       'created_at': createdAt.toIso8601String(),
+      'display_name': displayName,
+      'email': email,
     };
   }
+
+  VaultMember copyWith({
+    String? id,
+    String? vaultId,
+    String? userId,
+    VaultRole? role,
+    String? encryptedVaultKey,
+    Map<String, dynamic>? keyWrapMetadata,
+    DateTime? createdAt,
+    String? displayName,
+    String? email,
+  }) {
+    return VaultMember(
+      id: id ?? this.id,
+      vaultId: vaultId ?? this.vaultId,
+      userId: userId ?? this.userId,
+      role: role ?? this.role,
+      encryptedVaultKey: encryptedVaultKey ?? this.encryptedVaultKey,
+      keyWrapMetadata: keyWrapMetadata ?? this.keyWrapMetadata,
+      createdAt: createdAt ?? this.createdAt,
+      displayName: displayName ?? this.displayName,
+      email: email ?? this.email,
+    );
+  }
 }
+

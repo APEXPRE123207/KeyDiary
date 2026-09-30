@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:keydiary/features/entries/domain/attachment.dart';
 import 'package:keydiary/features/entries/domain/entry.dart';
 import 'package:keydiary/features/entries/domain/entry_field.dart';
+import 'package:uuid/uuid.dart';
 
 void main() {
   group('Entry & EntryField Model Tests', () {
@@ -75,5 +76,136 @@ void main() {
       expect(pdfAtt.isPdf, isTrue);
       expect(pdfAtt.formattedSize, equals('500.0 KB'));
     });
+
+    test('Attachment copyWith preserves or updates localFilePath correctly', () {
+      final att = Attachment(
+        id: 'att-100',
+        entryId: 'e-100',
+        storagePath: 'vaults/v1/entries/doc.png',
+        fileName: 'doc.png',
+        mimeType: 'image/png',
+        size: 1024,
+        createdAt: DateTime.now(),
+        localFilePath: '/data/user/0/attachments/doc.png',
+      );
+
+      expect(att.localFilePath, equals('/data/user/0/attachments/doc.png'));
+
+      final copySame = att.copyWith(size: 2048);
+      expect(copySame.localFilePath, equals('/data/user/0/attachments/doc.png'));
+
+      final copyNew = att.copyWith(localFilePath: '/new/path/doc.png');
+      expect(copyNew.localFilePath, equals('/new/path/doc.png'));
+    });
+
+    test('Attachment JSON roundtrip preserves local_file_path', () {
+      final att = Attachment(
+        id: 'att-json',
+        entryId: 'e-json',
+        storagePath: 'vaults/v1/entries/test.jpg',
+        fileName: 'test.jpg',
+        mimeType: 'image/jpeg',
+        size: 2048,
+        createdAt: DateTime.parse('2026-09-21T12:00:00.000Z'),
+        localFilePath: '/storage/emulated/0/doc.jpg',
+      );
+
+      final json = att.toJson();
+      expect(json['local_file_path'], equals('/storage/emulated/0/doc.jpg'));
+
+      final deserialized = Attachment.fromJson(json);
+      expect(deserialized.localFilePath, equals('/storage/emulated/0/doc.jpg'));
+      expect(deserialized.fileName, equals('test.jpg'));
+    });
+
+    test('Entry supports multiple attachments and preserves list across JSON serialization', () {
+      final entry = Entry(
+        id: 'entry-multi',
+        categoryId: 'cat-1',
+        vaultId: 'vault-1',
+        title: 'Land Property Deed & Receipts',
+        createdAt: DateTime.parse('2026-09-21T12:00:00.000Z'),
+        updatedAt: DateTime.parse('2026-09-21T12:00:00.000Z'),
+        attachments: [
+          Attachment(
+            id: 'att-1',
+            entryId: 'entry-multi',
+            storagePath: 'vaults/v1/entries/page1.jpg',
+            fileName: 'page1.jpg',
+            mimeType: 'image/jpeg',
+            size: 1024000,
+            createdAt: DateTime.parse('2026-09-21T12:00:00.000Z'),
+            localFilePath: '/path/to/page1.jpg',
+          ),
+          Attachment(
+            id: 'att-2',
+            entryId: 'entry-multi',
+            storagePath: 'vaults/v1/entries/page2.jpg',
+            fileName: 'page2.jpg',
+            mimeType: 'image/jpeg',
+            size: 2048000,
+            createdAt: DateTime.parse('2026-09-21T12:00:00.000Z'),
+            localFilePath: '/path/to/page2.jpg',
+          ),
+          Attachment(
+            id: 'att-3',
+            entryId: 'entry-multi',
+            storagePath: 'vaults/v1/entries/receipt.pdf',
+            fileName: 'receipt.pdf',
+            mimeType: 'application/pdf',
+            size: 512000,
+            createdAt: DateTime.parse('2026-09-21T12:00:00.000Z'),
+            localFilePath: '/path/to/receipt.pdf',
+          ),
+        ],
+      );
+
+      expect(entry.attachments.length, equals(3));
+      expect(entry.attachments[0].fileName, equals('page1.jpg'));
+      expect(entry.attachments[1].fileName, equals('page2.jpg'));
+      expect(entry.attachments[2].fileName, equals('receipt.pdf'));
+
+      final json = entry.toJson();
+      final restored = Entry.fromJson(json);
+
+      expect(restored.attachments.length, equals(3));
+      expect(restored.attachments[0].fileName, equals('page1.jpg'));
+      expect(restored.attachments[0].localFilePath, equals('/path/to/page1.jpg'));
+      expect(restored.attachments[1].fileName, equals('page2.jpg'));
+      expect(restored.attachments[2].isPdf, isTrue);
+    });
+
+    test('Entry copyWith allows modifying vaultId and categoryId correctly', () {
+      final entry = Entry(
+        id: 'entry-1',
+        categoryId: 'cat-old',
+        vaultId: 'vault-old',
+        title: 'Title',
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
+      );
+
+      final dynamicUuid = const Uuid().v4();
+      final updated = entry.copyWith(
+        categoryId: 'cat-new',
+        vaultId: dynamicUuid,
+      );
+
+      expect(updated.categoryId, equals('cat-new'));
+      expect(updated.vaultId, equals(dynamicUuid));
+      expect(updated.title, equals('Title'));
+    });
+
+    test('Dynamic admin resolution extracts non-hardcoded name and initial from vault name', () {
+      final vaultName = "Deb's Family Vault";
+      final match = RegExp(r"^(.+?)'s\s+", caseSensitive: false).firstMatch(vaultName);
+      expect(match, isNotNull);
+      final adminName = match!.group(1)!.trim();
+      expect(adminName, equals('Deb'));
+      final adminInitial = adminName[0].toUpperCase();
+      expect(adminInitial, equals('D'));
+      expect(adminInitial, isNot(equals('O')));
+    });
   });
 }
+

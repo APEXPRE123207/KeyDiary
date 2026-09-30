@@ -1,32 +1,86 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../core/network/supabase_client.dart';
+import '../../../core/security/secure_storage_service.dart';
 import '../domain/audit_log.dart';
 
 /// Repository for privacy-preserving audit logs
 class AuditRepository {
   final List<AuditLog> _localLogs = [];
+  bool _loaded = false;
+
+  Future<void> _ensureLoaded() async {
+    if (_loaded) return;
+    try {
+      final raw = await SecureStorageService.getLocalAuditLogs();
+      _localLogs.clear();
+      _localLogs.addAll(raw.map((m) => AuditLog.fromJson(m)));
+      _loaded = true;
+    } catch (_) {
+      _loaded = true;
+    }
+  }
+
+  Future<void> _persist() async {
+    await SecureStorageService.saveLocalAuditLogs(
+      _localLogs.map((l) => l.toJson()).toList(),
+    );
+  }
 
   Future<List<AuditLog>> getLogs(String vaultId) async {
-    if (SupabaseService.isInitialized) {
-      final client = Supabase.instance.client;
-      final res = await client
-          .from('audit_logs')
-          .select('*, profiles:user_id(display_name)')
-          .eq('vault_id', vaultId)
-          .order('created_at', ascending: false)
-          .limit(50);
+    await _ensureLoaded();
 
-      return (res as List).map((json) {
-        final profile = json['profiles'] as Map<String, dynamic>?;
-        final map = Map<String, dynamic>.from(json);
-        if (profile != null) {
-          map['user_display_name'] = profile['display_name'];
+    if (SupabaseService.isInitialized) {
+      try {
+        final client = Supabase.instance.client;
+        final res = await client
+            .from('audit_logs')
+            .select()
+            .eq('vault_id', vaultId)
+            .order('created_at', ascending: false)
+            .limit(50)
+            .timeout(const Duration(seconds: 4));
+
+        final remoteLogs = (res as List).map((json) {
+          final map = Map<String, dynamic>.from(json);
+          return AuditLog.fromJson(map);
+        }).toList();
+
+        for (final rl in remoteLogs) {
+          final idx = _localLogs.indexWhere((l) => l.id == rl.id);
+          if (idx != -1) {
+            _localLogs[idx] = rl;
+          } else {
+            _localLogs.add(rl);
+          }
         }
-        return AuditLog.fromJson(map);
-      }).toList();
-    } else {
-      return List.unmodifiable(_localLogs.where((l) => l.vaultId == vaultId));
+        await _persist();
+      } catch (_) {
+        // Fall back gracefully to local storage if offline or query fails
+      }
     }
+
+    final logs = _localLogs.where((l) => l.vaultId == vaultId).toList();
+    logs.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+
+    // Resolve user display names from stored accounts / members
+    final accounts = await SecureStorageService.getLocalAccounts();
+    final members = await SecureStorageService.getLocalMembers();
+
+    return logs.map((l) {
+      if (l.userDisplayName != null && l.userDisplayName!.isNotEmpty) return l;
+
+      final acc = accounts.where((a) => a['id'] == l.userId).firstOrNull;
+      if (acc != null && acc['displayName'] != null) {
+        return l.copyWith(userDisplayName: acc['displayName'] as String);
+      }
+
+      final mem = members.where((m) => m['user_id'] == l.userId).firstOrNull;
+      if (mem != null && mem['display_name'] != null) {
+        return l.copyWith(userDisplayName: mem['display_name'] as String);
+      }
+
+      return l;
+    }).toList();
   }
 
   Future<void> logAction({
@@ -48,6 +102,25 @@ class AuditRepository {
           k.contains('account') ||
           k.contains('value'));
 
+    await _ensureLoaded();
+    final logId = 'log-${DateTime.now().millisecondsSinceEpoch}';
+
+    _localLogs.insert(
+      0,
+      AuditLog(
+        id: logId,
+        vaultId: vaultId,
+        userId: userId,
+        action: action,
+        entityType: entityType,
+        entityId: entityId,
+        metadata: sanitizedMeta,
+        createdAt: DateTime.now(),
+        userDisplayName: userDisplayName ?? 'You',
+      ),
+    );
+    await _persist();
+
     if (SupabaseService.isInitialized) {
       try {
         await Supabase.instance.client.from('audit_logs').insert({
@@ -59,57 +132,10 @@ class AuditRepository {
           'metadata': sanitizedMeta,
         });
       } catch (_) {}
-    } else {
-      _localLogs.insert(
-        0,
-        AuditLog(
-          id: 'log-${DateTime.now().millisecondsSinceEpoch}',
-          vaultId: vaultId,
-          userId: userId,
-          action: action,
-          entityType: entityType,
-          entityId: entityId,
-          metadata: sanitizedMeta,
-          createdAt: DateTime.now(),
-          userDisplayName: userDisplayName ?? 'You',
-        ),
-      );
     }
   }
 
   void seedDemoLogs(String vaultId) {
-    if (_localLogs.isNotEmpty) return;
-    _localLogs.addAll([
-      AuditLog(
-        id: 'l1',
-        vaultId: vaultId,
-        userId: 'u1',
-        action: 'ENTRY_CREATED',
-        entityType: 'ENTRY',
-        metadata: {'title_hint': 'SBI Fixed Deposit'},
-        createdAt: DateTime.now().subtract(const Duration(minutes: 32)),
-        userDisplayName: 'You',
-      ),
-      AuditLog(
-        id: 'l2',
-        vaultId: vaultId,
-        userId: 'u2',
-        action: 'ENTRY_UPDATED',
-        entityType: 'ENTRY',
-        metadata: {'title_hint': 'LIC Policy'},
-        createdAt: DateTime.now().subtract(const Duration(hours: 3)),
-        userDisplayName: 'Dad',
-      ),
-      AuditLog(
-        id: 'l3',
-        vaultId: vaultId,
-        userId: 'u1',
-        action: 'ENTRY_CREATED',
-        entityType: 'ENTRY',
-        metadata: {'title_hint': 'Main Door Key'},
-        createdAt: DateTime.now().subtract(const Duration(days: 1, hours: 2)),
-        userDisplayName: 'You',
-      ),
-    ]);
+    // No-op: Only genuine user activities are logged
   }
 }

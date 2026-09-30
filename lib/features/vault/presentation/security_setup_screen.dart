@@ -186,7 +186,13 @@ class _SecuritySetupScreenState extends ConsumerState<SecuritySetupScreen> {
                         color: isDark ? AppColors.darkPrimary : AppColors.primary,
                       ),
                       const SizedBox(width: 8),
-                      Text('Biometrics (Fingerprint / Face)', style: AppTypography.labelLg()),
+                      Expanded(
+                        child: Text(
+                          'Biometric Unlock',
+                          style: AppTypography.labelLg(),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
                     ],
                   ),
                   subtitle: Padding(

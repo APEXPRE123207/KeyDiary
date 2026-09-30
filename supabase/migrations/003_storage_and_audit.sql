@@ -12,9 +12,11 @@ VALUES (
     'vault_attachments',
     false,
     52428800, -- 50MB limit per document
-    ARRAY['image/jpeg', 'image/png', 'image/webp', 'application/pdf', 'text/plain']
+    ARRAY['image/jpeg', 'image/png', 'image/webp', 'image/heic', 'image/gif', 'application/pdf', 'text/plain']
 )
-ON CONFLICT (id) DO UPDATE SET public = false;
+ON CONFLICT (id) DO UPDATE SET 
+    public = false,
+    allowed_mime_types = ARRAY['image/jpeg', 'image/png', 'image/webp', 'image/heic', 'image/gif', 'application/pdf', 'text/plain'];
 
 -- Storage RLS Policies
 CREATE POLICY "Authenticated users can read attachments for their vaults"
@@ -29,12 +31,26 @@ USING (
             WHERE a.storage_path = storage.objects.name
             AND public.is_vault_member(e.vault_id)
         )
+        OR (
+            storage.objects.name LIKE 'vaults/%'
+            AND public.is_vault_member((regexp_match(storage.objects.name, '^vaults/([0-9a-fA-F-]+)/'))[1]::uuid)
+        )
     )
 );
 
 CREATE POLICY "Authenticated vault members can upload attachments"
 ON storage.objects FOR INSERT
 TO authenticated
+WITH CHECK (
+    bucket_id = 'vault_attachments'
+);
+
+CREATE POLICY "Authenticated vault members can update attachments"
+ON storage.objects FOR UPDATE
+TO authenticated
+USING (
+    bucket_id = 'vault_attachments'
+)
 WITH CHECK (
     bucket_id = 'vault_attachments'
 );

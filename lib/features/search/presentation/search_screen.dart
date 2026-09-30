@@ -71,7 +71,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                   const SizedBox(width: 4),
                   Text(
                     'Instant on-device search',
-                    style: AppTypography.labelSm(),
+                    style: AppTypography.labelSm(context: context),
                   ),
                 ],
               ),
@@ -87,8 +87,8 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                           children: [
                             Icon(Icons.search, size: 48, color: isDark ? AppColors.darkOutline : AppColors.outline),
                             const SizedBox(height: AppDimensions.spaceSm),
-                            Text('Search your private vault', style: AppTypography.labelLg()),
-                            Text('Find bank details, keys, policy numbers, or safe spots.', style: AppTypography.bodySm()),
+                            Text('Search your private vault', style: AppTypography.labelLg(context: context)),
+                            Text('Find bank details, keys, policy numbers, or safe spots.', style: AppTypography.bodySm(context: context)),
                           ],
                         ),
                       )
@@ -102,7 +102,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
   }
 
   Widget _buildSearchResults(String vaultId) {
-    final entriesAsync = ref.watch(categoryEntriesProvider('cat-investments-$vaultId'));
+    final entriesAsync = ref.watch(vaultEntriesProvider);
 
     return entriesAsync.when(
       data: (entries) {
@@ -115,7 +115,7 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
 
         if (matches.isEmpty) {
           return Center(
-            child: Text('No matching records found for "$_query"', style: AppTypography.bodyMd()),
+            child: Text('No matching records found for "$_query"', style: AppTypography.bodyMd(context: context)),
           );
         }
 
@@ -135,8 +135,8 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(entry.title, style: AppTypography.labelLg()),
-                          Text('Investments • Tap to view', style: AppTypography.bodySm()),
+                          Text(entry.title, style: AppTypography.labelLg(context: ctx)),
+                          Text('Investments • Tap to view', style: AppTypography.bodySm(context: ctx)),
                         ],
                       ),
                     ),

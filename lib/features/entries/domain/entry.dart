@@ -31,6 +31,8 @@ class Entry {
 
   Entry copyWith({
     String? id,
+    String? categoryId,
+    String? vaultId,
     String? title,
     String? notes,
     bool? isPinned,
@@ -40,8 +42,8 @@ class Entry {
   }) {
     return Entry(
       id: id ?? this.id,
-      categoryId: categoryId,
-      vaultId: vaultId,
+      categoryId: categoryId ?? this.categoryId,
+      vaultId: vaultId ?? this.vaultId,
       title: title ?? this.title,
       notes: notes ?? this.notes,
       isPinned: isPinned ?? this.isPinned,
@@ -61,5 +63,41 @@ class Entry {
       }
     }
     return null;
+  }
+
+  factory Entry.fromJson(Map<String, dynamic> json) {
+    return Entry(
+      id: json['id'] as String,
+      categoryId: json['category_id'] as String,
+      vaultId: json['vault_id'] as String,
+      title: json['title'] as String,
+      notes: json['notes'] as String?,
+      isPinned: json['is_pinned'] as bool? ?? false,
+      createdBy: json['created_by'] as String?,
+      createdAt: DateTime.parse(json['created_at'] as String),
+      updatedAt: DateTime.parse(json['updated_at'] as String),
+      fields: (json['fields'] as List? ?? [])
+          .map((f) => EntryField.fromJson(Map<String, dynamic>.from(f as Map)))
+          .toList(),
+      attachments: (json['attachments'] as List? ?? [])
+          .map((a) => Attachment.fromJson(Map<String, dynamic>.from(a as Map)))
+          .toList(),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'category_id': categoryId,
+      'vault_id': vaultId,
+      'title': title,
+      'notes': notes,
+      'is_pinned': isPinned,
+      'created_by': createdBy,
+      'created_at': createdAt.toIso8601String(),
+      'updated_at': updatedAt.toIso8601String(),
+      'fields': fields.map((f) => f.toJson()).toList(),
+      'attachments': attachments.map((a) => a.toJson()).toList(),
+    };
   }
 }

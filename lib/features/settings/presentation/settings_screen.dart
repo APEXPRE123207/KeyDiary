@@ -53,13 +53,19 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
       appBar: AppBar(
         title: const Text('Vault Settings'),
       ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: AppDimensions.margin),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: AppDimensions.spaceSm),
+      body: SizedBox.expand(
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: AppColors.bgGradient(isDark),
+          ),
+          child: SafeArea(
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.symmetric(horizontal: AppDimensions.margin),
+              child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: AppDimensions.spaceSm),
 
               // Profile Section
               AppCard(
@@ -69,13 +75,17 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       width: 52,
                       height: 52,
                       decoration: BoxDecoration(
-                        color: isDark ? AppColors.darkPrimaryContainer : AppColors.primaryContainer,
+                        color: isDark ? AppColors.darkPrimaryContainer : AppColors.primary,
                         shape: BoxShape.circle,
                       ),
                       child: Center(
                         child: Text(
-                          user?.displayName.isNotEmpty == true ? user!.displayName[0].toUpperCase() : 'D',
-                          style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
+                          user?.displayName.isNotEmpty == true ? user!.displayName[0].toUpperCase() : 'A',
+                          style: TextStyle(
+                            color: isDark ? AppColors.darkPrimary : Colors.white,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ),
@@ -84,8 +94,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(user?.displayName ?? 'Dad', style: AppTypography.headlineSm()),
-                          Text(user?.email ?? 'dad@family.vault', style: AppTypography.bodySm()),
+                          Text(user?.displayName ?? 'Member', style: AppTypography.headlineSm(context: context)),
+                          Text(user?.email ?? 'member@keydiary.vault', style: AppTypography.bodySm(context: context)),
                           const SizedBox(height: 4),
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
@@ -93,7 +103,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                               color: isDark ? AppColors.darkSurfaceContainerHigh : AppColors.surfaceContainerHigh,
                               borderRadius: BorderRadius.circular(AppDimensions.radiusFull),
                             ),
-                            child: Text('Primary Vault Owner', style: AppTypography.labelSm()),
+                            child: Text(
+                              ref.watch(isVaultOwnerProvider) ? 'Vault Admin' : 'Co-Guardian',
+                              style: AppTypography.labelSm(context: context),
+                            ),
                           ),
                         ],
                       ),
@@ -105,13 +118,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
               const SizedBox(height: AppDimensions.spaceLg),
 
               // Appearance (Dark Theme & Light Theme)
-              Text('Appearance', style: AppTypography.headlineSm()),
+              Text('Appearance', style: AppTypography.headlineSm(context: context)),
               const SizedBox(height: AppDimensions.spaceSm),
               AppCard(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Theme Mode', style: AppTypography.labelLg()),
+                    Text('Theme Mode', style: AppTypography.labelLg(context: context)),
                     const SizedBox(height: AppDimensions.spaceSm),
                     Row(
                       children: [
@@ -138,7 +151,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                       contentPadding: EdgeInsets.zero,
                       leading: const Icon(Icons.pin),
                       title: Text('Change Master PIN', style: AppTypography.labelLg()),
-                      subtitle: Text('Update your 4 to 6 digit security code', style: AppTypography.bodySm()),
+                      subtitle: Text('Update your 6-digit security PIN', style: AppTypography.bodySm()),
                       trailing: const Icon(Icons.chevron_right),
                       onTap: () => context.push('/security-setup'),
                     ),
@@ -234,6 +247,12 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 onPressed: () async {
                   await ref.read(authRepositoryProvider).signOut();
                   ref.read(vaultKeyProvider.notifier).state = null;
+                  ref.read(activeVaultProvider.notifier).state = null;
+                  await SecureStorageService.setActiveVaultId('');
+                  ref.invalidate(categoriesProvider);
+                  ref.invalidate(vaultMembersProvider);
+                  ref.invalidate(vaultEntriesProvider);
+                  ref.invalidate(currentUserProvider);
                   if (!context.mounted) return;
                   context.go('/auth');
                 },
@@ -244,6 +263,8 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           ),
         ),
       ),
+      ),
+      ),
     );
   }
 
@@ -251,11 +272,15 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
     final isSelected = currentMode == mode;
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
+    final accent = AppColors.accent(isDark);
     return ChoiceChip(
       label: Text(label),
       selected: isSelected,
-      selectedColor: isDark ? AppColors.darkPrimaryContainer : AppColors.primaryContainer,
-      labelStyle: TextStyle(color: isSelected ? Colors.white : null),
+      selectedColor: accent,
+      labelStyle: TextStyle(
+        color: isSelected ? (isDark ? AppColors.darkBackground : Colors.white) : null,
+        fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+      ),
       onSelected: (_) {
         ref.read(themeModeProvider.notifier).setMode(mode);
       },

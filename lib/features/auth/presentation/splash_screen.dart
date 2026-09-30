@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import '../../../core/network/supabase_client.dart';
 import '../../../core/constants/app_colors.dart';
 import '../../../core/constants/app_dimensions.dart';
 import '../../../core/constants/app_typography.dart';
@@ -21,13 +23,18 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
   Future<void> _handleStart() async {
     setState(() => _isLoading = true);
     final hasPin = await SecureStorageService.hasPin();
+    final hasSession = await SecureStorageService.hasUserSession() ||
+        (SupabaseService.isInitialized && Supabase.instance.client.auth.currentUser != null);
     setState(() => _isLoading = false);
 
     if (!mounted) return;
-    if (hasPin) {
+    if (!hasSession) {
+      // Must authenticate or create vault member account first
+      context.go('/auth');
+    } else if (hasPin) {
       context.go('/lock');
     } else {
-      context.go('/auth');
+      context.go('/security-setup');
     }
   }
 
@@ -46,18 +53,12 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
               // Top Trust Bar
               Padding(
                 padding: const EdgeInsets.only(top: AppDimensions.spaceMd),
-                child: Row(
+                child: const Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    const TrustBadge(
+                    TrustBadge(
                       type: TrustBadgeType.vaultEnclave,
                       customText: 'End-to-End Isolated',
-                    ),
-                    Text(
-                      'v2.4 Private',
-                      style: AppTypography.labelSm(
-                        color: isDark ? AppColors.darkOutline : AppColors.outline,
-                      ),
                     ),
                   ],
                 ),

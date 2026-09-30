@@ -67,6 +67,9 @@ android/.gradle/
 # Widget Preview related
 .widget_preview/
 
-# Local scratch notes
+# Local scratch notes and environment configs
 notes
+design.md
+.env
+*.env
 

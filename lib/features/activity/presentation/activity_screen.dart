@@ -16,15 +16,6 @@ class ActivityScreen extends ConsumerStatefulWidget {
 }
 
 class _ActivityScreenState extends ConsumerState<ActivityScreen> {
-  @override
-  void initState() {
-    super.initState();
-    // Ensure demo activity logs are populated for active vault
-    final vault = ref.read(activeVaultProvider);
-    if (vault != null) {
-      ref.read(auditRepositoryProvider).seedDemoLogs(vault.id);
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,13 +27,19 @@ class _ActivityScreenState extends ConsumerState<ActivityScreen> {
       appBar: AppBar(
         title: const Text('Recent Vault Activity'),
       ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: AppDimensions.margin),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: AppDimensions.spaceSm),
+      body: SizedBox.expand(
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: AppColors.bgGradient(isDark),
+          ),
+          child: SafeArea(
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              padding: const EdgeInsets.symmetric(horizontal: AppDimensions.margin),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: AppDimensions.spaceSm),
 
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -129,7 +126,32 @@ class _ActivityScreenState extends ConsumerState<ActivityScreen> {
                     }).toList(),
                   );
                 },
-                loading: () => const Center(child: CircularProgressIndicator()),
+                loading: () {
+                  final shimmerBase = isDark ? const Color(0xFF162320) : const Color(0xFFE8EDE9);
+                  return Column(
+                    children: List.generate(3, (index) => Padding(
+                      padding: const EdgeInsets.only(bottom: AppDimensions.spaceSm),
+                      child: AppCard(
+                        child: Row(
+                          children: [
+                            Container(width: 40, height: 40, decoration: BoxDecoration(color: shimmerBase, borderRadius: BorderRadius.circular(10))),
+                            const SizedBox(width: AppDimensions.spaceMd),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Container(width: 140, height: 14, decoration: BoxDecoration(color: shimmerBase, borderRadius: BorderRadius.circular(4))),
+                                  const SizedBox(height: 6),
+                                  Container(width: 80, height: 10, decoration: BoxDecoration(color: shimmerBase, borderRadius: BorderRadius.circular(4))),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )),
+                  );
+                },
                 error: (e, _) => Text('Error loading activity: $e'),
               ),
 
@@ -137,6 +159,8 @@ class _ActivityScreenState extends ConsumerState<ActivityScreen> {
             ],
           ),
         ),
+      ),
+      ),
       ),
     );
   }
