@@ -15,7 +15,7 @@ class Entry {
   final List<EntryField> fields;
   final List<Attachment> attachments;
 
-  const Entry({
+  Entry({
     required this.id,
     required this.categoryId,
     required this.vaultId,
@@ -26,8 +26,29 @@ class Entry {
     required this.createdAt,
     required this.updatedAt,
     this.fields = const [],
-    this.attachments = const [],
-  });
+    List<Attachment> attachments = const [],
+  }) : attachments = _deduplicateAttachments(attachments);
+
+  static List<Attachment> _deduplicateAttachments(List<Attachment> list) {
+    if (list.length <= 1) return list;
+    final Map<String, Attachment> unique = {};
+    for (final att in list) {
+      final key = att.fileName.trim().toLowerCase();
+      if (!unique.containsKey(key)) {
+        unique[key] = att;
+      } else {
+        final existing = unique[key]!;
+        final hasLocal = att.localFilePath != null && att.localFilePath!.isNotEmpty;
+        final existingHasLocal = existing.localFilePath != null && existing.localFilePath!.isNotEmpty;
+        if (hasLocal && !existingHasLocal) {
+          unique[key] = att;
+        } else if (existing.storagePath.isEmpty && att.storagePath.isNotEmpty) {
+          unique[key] = att;
+        }
+      }
+    }
+    return unique.values.toList();
+  }
 
   Entry copyWith({
     String? id,

@@ -147,27 +147,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             'encrypted_vault_key': vek != null ? base64Encode(vek) : 'wrapped_key_placeholder',
           }, onConflict: 'vault_id, user_id');
 
-          // C. If Admin, auto-enroll all other members and sync categories
+          // C. Sync all local Categories to Supabase if needed
           if (user.isAdmin) {
-            try {
-              final childProfiles = await client
-                  .from('profiles')
-                  .select('user_id')
-                  .neq('user_id', sbUser.id);
-              for (final cp in (childProfiles as List)) {
-                final cUid = cp['user_id'] as String?;
-                if (cUid != null && cUid.isNotEmpty && cUid != sbUser.id) {
-                  await client.from('vault_members').upsert({
-                    'vault_id': targetVault.id,
-                    'user_id': cUid,
-                    'role': 'MEMBER',
-                    'encrypted_vault_key': vek != null ? base64Encode(vek) : 'wrapped_key_placeholder',
-                  }, onConflict: 'vault_id, user_id');
-                }
-              }
-            } catch (_) {}
-
-            // D. Sync all local Categories to Supabase
             try {
               final localCats = await catRepo.getCategories(targetVault.id);
               for (final c in localCats) {

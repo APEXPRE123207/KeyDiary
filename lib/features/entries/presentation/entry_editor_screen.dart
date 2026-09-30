@@ -84,7 +84,12 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
     _notesController = TextEditingController(text: e?.notes ?? '');
 
     if (e != null && e.attachments.isNotEmpty) {
+      final seenFiles = <String>{};
       for (final att in e.attachments) {
+        final key = att.fileName.trim().toLowerCase();
+        if (seenFiles.contains(key)) continue;
+        seenFiles.add(key);
+
         Uint8List? fileBytes;
         if (att.localFilePath != null && !kIsWeb && File(att.localFilePath!).existsSync()) {
           try {
@@ -399,6 +404,8 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
                       final bytes = await photo.readAsBytes();
                       final savedPath = await _savePhotoToAppDocuments(photo.name, bytes);
                       setState(() {
+                        final key = photo.name.trim().toLowerCase();
+                        _attachedFiles.removeWhere((f) => f.fileName.trim().toLowerCase() == key);
                         _attachedFiles.add(
                           _AttachedFileItem(
                             id: const Uuid().v4(),
@@ -438,7 +445,11 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
                         );
                       }
                       setState(() {
-                        _attachedFiles.addAll(newItems);
+                        for (final item in newItems) {
+                          final key = item.fileName.trim().toLowerCase();
+                          _attachedFiles.removeWhere((f) => f.fileName.trim().toLowerCase() == key);
+                          _attachedFiles.add(item);
+                        }
                       });
                     }
                   },

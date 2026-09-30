@@ -46,6 +46,26 @@ class _EntryDetailScreenState extends ConsumerState<EntryDetailScreen> {
         );
   }
 
+  List<Attachment> get _displayAttachments {
+    final Map<String, Attachment> unique = {};
+    for (final att in _currentEntry.attachments) {
+      final key = att.fileName.trim().toLowerCase();
+      if (!unique.containsKey(key)) {
+        unique[key] = att;
+      } else {
+        final existing = unique[key]!;
+        final hasLocal = att.localFilePath != null && att.localFilePath!.isNotEmpty;
+        final existingHasLocal = existing.localFilePath != null && existing.localFilePath!.isNotEmpty;
+        if (hasLocal && !existingHasLocal) {
+          unique[key] = att;
+        } else if (existing.storagePath.isEmpty && att.storagePath.isNotEmpty) {
+          unique[key] = att;
+        }
+      }
+    }
+    return unique.values.toList();
+  }
+
   Future<void> _confirmDelete() async {
     if (!ref.read(isVaultOwnerProvider)) return;
     final confirmed = await showDialog<bool>(
@@ -357,7 +377,7 @@ class _EntryDetailScreenState extends ConsumerState<EntryDetailScreen> {
                   children: [
                     Text('Attached Documents', style: AppTypography.headlineSm()),
                     Text(
-                      '${_currentEntry.attachments.length} ${(_currentEntry.attachments.length == 1) ? 'file' : 'files'}',
+                      '${_displayAttachments.length} ${(_displayAttachments.length == 1) ? 'file' : 'files'}',
                       style: AppTypography.labelSm(),
                     ),
                   ],
@@ -365,7 +385,7 @@ class _EntryDetailScreenState extends ConsumerState<EntryDetailScreen> {
 
                 const SizedBox(height: AppDimensions.spaceSm),
 
-                if (_currentEntry.attachments.isEmpty)
+                if (_displayAttachments.isEmpty)
                   AppCard(
                     child: Row(
                       children: [
@@ -378,7 +398,7 @@ class _EntryDetailScreenState extends ConsumerState<EntryDetailScreen> {
                     ),
                   )
                 else
-                  ..._currentEntry.attachments.map((att) => Padding(
+                  ..._displayAttachments.map((att) => Padding(
                         padding: const EdgeInsets.only(bottom: AppDimensions.spaceSm),
                         child: AppCard(
                           child: InkWell(

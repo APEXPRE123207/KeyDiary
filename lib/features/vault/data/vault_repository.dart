@@ -288,54 +288,6 @@ class VaultRepository {
       }
     }
 
-    // If Co-Guardian, ensure attached to primary family vault as a member
-    if (isChildOrCoGuardian) {
-      final primaryShared = _localVaults.where((v) => v.createdBy != userId).firstOrNull ?? _localVaults.firstOrNull;
-      if (primaryShared != null) {
-        final alreadyMember = _localMembers.any((m) => m.vaultId == primaryShared.id && memberMatches(m));
-        if (!alreadyMember) {
-          final pVek = await SecureStorageService.getVaultKey(primaryShared.id);
-          final effectiveName = displayName ?? 'Co-Guardian';
-          _localMembers.add(
-            VaultMember(
-              id: 'member-coguardian-${DateTime.now().millisecondsSinceEpoch}',
-              vaultId: primaryShared.id,
-              userId: userId,
-              role: VaultRole.member,
-              encryptedVaultKey: pVek != null ? base64Encode(pVek) : '',
-              keyWrapMetadata: {'local': true},
-              createdAt: DateTime.now(),
-              displayName: effectiveName,
-              email: email ?? AuthRepository.memberNameToEmail(effectiveName),
-            ),
-          );
-          updated = true;
-        }
-
-        // Clean up accidental solo vault created for Co-Guardian on this device
-        final soloVault = _localVaults.where((v) => v.createdBy == userId && v.id != primaryShared.id).firstOrNull;
-        if (soloVault != null) {
-          _localVaults.removeWhere((v) => v.id == soloVault.id);
-          _localMembers.removeWhere((m) => m.vaultId == soloVault.id);
-          // Migrate any local entries from soloVault to primaryShared
-          try {
-            final storedEntries = await SecureStorageService.getLocalEntries();
-            bool entryMigrated = false;
-            for (int i = 0; i < storedEntries.length; i++) {
-              if (storedEntries[i]['vault_id'] == soloVault.id) {
-                storedEntries[i]['vault_id'] = primaryShared.id;
-                entryMigrated = true;
-              }
-            }
-            if (entryMigrated) {
-              await SecureStorageService.saveLocalEntries(storedEntries);
-            }
-          } catch (_) {}
-          updated = true;
-        }
-      }
-    }
-
     if (updated) {
       await _persist();
     }
@@ -373,21 +325,6 @@ class VaultRepository {
             .timeout(const Duration(seconds: 4));
 
         final remoteVaults = (res as List).map((json) => Vault.fromJson(json)).toList();
-        if (remoteVaults.isEmpty && isChildOrCoGuardian) {
-          try {
-            final allV = await client.from('vaults').select().order('created_at', ascending: true).limit(1);
-            if ((allV as List).isNotEmpty) {
-              final v = Vault.fromJson(Map<String, dynamic>.from(allV.first));
-              remoteVaults.add(v);
-              await client.from('vault_members').upsert({
-                'vault_id': v.id,
-                'user_id': userId,
-                'role': 'MEMBER',
-                'encrypted_vault_key': 'wrapped_key_placeholder',
-              }, onConflict: 'vault_id, user_id');
-            }
-          } catch (_) {}
-        }
         for (final rv in remoteVaults) {
           final idx = _localVaults.indexWhere((v) => v.id == rv.id);
           if (idx != -1) {
@@ -405,8 +342,7 @@ class VaultRepository {
     final matchedVaults = _localVaults
         .where((v) =>
             (!isChildOrCoGuardian && v.createdBy == userId) ||
-            _localMembers.any((m) => m.vaultId == v.id && memberMatches(m)) ||
-            (isChildOrCoGuardian && _localVaults.isNotEmpty))
+            _localMembers.any((m) => m.vaultId == v.id && memberMatches(m)))
         .toList();
 
     // If Co-Guardian and a shared vault exists, remove any accidental solo vault
