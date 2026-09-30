@@ -351,7 +351,7 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
   }
 
   void _ensureControllers(List<_CategoryFieldDef> defs) {
-    final knownKeys = defs.map((d) => d.key).toSet();
+    final knownKeys = defs.map((d) => d.key.trim().toLowerCase()).toSet();
     for (final def in defs) {
       if (!_fieldControllers.containsKey(def.key)) {
         final existingVal = widget.entry?.getFieldValue(def.key) ?? '';
@@ -360,8 +360,11 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
     }
 
     if (widget.entry != null && _customFields.isEmpty) {
+      final seenCustomKeys = <String>{};
       for (final f in widget.entry!.fields) {
-        if (!knownKeys.contains(f.fieldName)) {
+        final fKey = f.fieldName.trim().toLowerCase();
+        if (!knownKeys.contains(fKey) && !seenCustomKeys.contains(fKey)) {
+          seenCustomKeys.add(fKey);
           _customFields.add(f);
         }
       }
@@ -601,6 +604,7 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
                       final val = fieldValueCtrl.text.trim();
                       if (name.isNotEmpty && val.isNotEmpty) {
                         setState(() {
+                          _customFields.removeWhere((f) => f.fieldName.trim().toLowerCase() == name.toLowerCase());
                           _customFields.add(
                             EntryField(
                               id: 'f-${DateTime.now().millisecondsSinceEpoch}',
@@ -684,25 +688,29 @@ class _EntryEditorScreenState extends ConsumerState<EntryEditorScreen> {
         throw Exception('Vault encryption key is locked.');
       }
 
-      final fields = <EntryField>[];
+      final Map<String, EntryField> uniqueFields = {};
       for (int i = 0; i < templateDefs.length; i++) {
         final def = templateDefs[i];
         final val = _fieldControllers[def.key]?.text.trim() ?? '';
         if (val.isNotEmpty) {
-          fields.add(
-            EntryField(
-              id: 'f-tmpl-$i',
-              entryId: widget.entry?.id ?? '',
-              fieldName: def.key,
-              fieldType: def.type,
-              fieldValue: val,
-              isSensitive: def.isSensitive,
-              position: i,
-            ),
+          uniqueFields[def.key.trim().toLowerCase()] = EntryField(
+            id: 'f-tmpl-$i',
+            entryId: widget.entry?.id ?? '',
+            fieldName: def.key,
+            fieldType: def.type,
+            fieldValue: val,
+            isSensitive: def.isSensitive,
+            position: i,
           );
         }
       }
-      fields.addAll(_customFields);
+      for (final cf in _customFields) {
+        final key = cf.fieldName.trim().toLowerCase();
+        if (!uniqueFields.containsKey(key)) {
+          uniqueFields[key] = cf;
+        }
+      }
+      final fields = uniqueFields.values.toList();
 
       final List<Attachment> attachments = [];
       for (final item in _attachedFiles) {

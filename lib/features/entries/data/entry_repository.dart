@@ -31,6 +31,19 @@ class EntryRepository {
           migrated = true;
         }
       }
+      if (stored.isNotEmpty) {
+        int totalStoredFields = 0;
+        int totalDedupFields = 0;
+        for (final m in stored) {
+          totalStoredFields += (m['fields'] as List? ?? []).length;
+        }
+        for (final e in _localEntries) {
+          totalDedupFields += e.fields.length;
+        }
+        if (totalStoredFields != totalDedupFields) {
+          migrated = true;
+        }
+      }
       if (migrated) {
         await _persist();
       }

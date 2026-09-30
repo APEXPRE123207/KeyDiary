@@ -25,9 +25,27 @@ class Entry {
     this.createdBy,
     required this.createdAt,
     required this.updatedAt,
-    this.fields = const [],
+    List<EntryField> fields = const [],
     List<Attachment> attachments = const [],
-  }) : attachments = _deduplicateAttachments(attachments);
+  }) : fields = _deduplicateFields(fields),
+       attachments = _deduplicateAttachments(attachments);
+
+  static List<EntryField> _deduplicateFields(List<EntryField> list) {
+    if (list.length <= 1) return list;
+    final Map<String, EntryField> unique = {};
+    for (final f in list) {
+      final key = f.fieldName.trim().toLowerCase();
+      if (!unique.containsKey(key)) {
+        unique[key] = f;
+      } else {
+        final existing = unique[key]!;
+        if (existing.fieldValue.trim().isEmpty && f.fieldValue.trim().isNotEmpty) {
+          unique[key] = f;
+        }
+      }
+    }
+    return unique.values.toList();
+  }
 
   static List<Attachment> _deduplicateAttachments(List<Attachment> list) {
     if (list.length <= 1) return list;

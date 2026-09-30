@@ -46,6 +46,22 @@ class _EntryDetailScreenState extends ConsumerState<EntryDetailScreen> {
         );
   }
 
+  List<EntryField> get _displayFields {
+    final Map<String, EntryField> unique = {};
+    for (final f in _currentEntry.fields) {
+      final key = f.fieldName.trim().toLowerCase();
+      if (!unique.containsKey(key)) {
+        unique[key] = f;
+      } else {
+        final existing = unique[key]!;
+        if (existing.fieldValue.trim().isEmpty && f.fieldValue.trim().isNotEmpty) {
+          unique[key] = f;
+        }
+      }
+    }
+    return unique.values.toList();
+  }
+
   List<Attachment> get _displayAttachments {
     final Map<String, Attachment> unique = {};
     for (final att in _currentEntry.attachments) {
@@ -285,7 +301,7 @@ class _EntryDetailScreenState extends ConsumerState<EntryDetailScreen> {
 
                 const SizedBox(height: AppDimensions.spaceSm),
 
-                if (_currentEntry.fields.isEmpty)
+                if (_displayFields.isEmpty)
                   AppCard(
                     child: Text(
                       'No specific field values entered for this record.',
@@ -297,13 +313,13 @@ class _EntryDetailScreenState extends ConsumerState<EntryDetailScreen> {
                     padding: EdgeInsets.zero,
                     child: Column(
                       children: [
-                        for (int i = 0; i < _currentEntry.fields.length; i++) ...[
+                        for (int i = 0; i < _displayFields.length; i++) ...[
                           if (i > 0) const Divider(height: 1),
-                          if (_currentEntry.fields[i].isSensitive ||
-                              _currentEntry.fields[i].fieldType == EntryFieldType.secret)
+                          if (_displayFields[i].isSensitive ||
+                              _displayFields[i].fieldType == EntryFieldType.secret)
                             MaskedTextView(
-                              label: _currentEntry.fields[i].fieldName,
-                              rawValue: _currentEntry.fields[i].fieldValue,
+                              label: _displayFields[i].fieldName,
+                              rawValue: _displayFields[i].fieldValue,
                             )
                           else
                             Padding(
@@ -320,14 +336,14 @@ class _EntryDetailScreenState extends ConsumerState<EntryDetailScreen> {
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          _currentEntry.fields[i].fieldName,
+                                          _displayFields[i].fieldName,
                                           style: AppTypography.labelSm(
                                             color: isDark ? AppColors.darkOnSurfaceVariant : AppColors.onSurfaceVariant,
                                           ),
                                         ),
                                         const SizedBox(height: 2),
                                         Text(
-                                          _currentEntry.fields[i].fieldValue,
+                                          _displayFields[i].fieldValue,
                                           style: AppTypography.labelLg(),
                                         ),
                                       ],
